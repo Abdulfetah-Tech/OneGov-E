@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="backend/src/OneGov.Api/OneGov.Api.csproj" />
+    <Project Path="backend/src/OneGov.Application/OneGov.Application.csproj" />
+    <Project Path="backend/src/OneGov.Domain/OneGov.Domain.csproj" />
+    <Project Path="backend/src/OneGov.Infrastructure/OneGov.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="backend/tests/OneGov.Domain.Tests/OneGov.Domain.Tests.csproj" />
+    <Project Path="backend/tests/OneGov.IntegrationTests/OneGov.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

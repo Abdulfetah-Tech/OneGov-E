@@ -1,0 +1,60 @@
+{
+  "_meta": { "language": "አማርኛ", "reviewStatus": "machine-draft", "note": "Needs native-speaker review before any official use." },
+  "app": {
+    "tagline": "ለኢትዮጵያ መንግሥት አገልግሎቶች አንድ በር",
+    "prototypeNotice": "የሙከራ ስሪት፦ የሚታየው መረጃ ናሙና ነው፤ ከማንኛውም እውነተኛ የመንግሥት ሥርዓት ጋር አልተገናኘም።"
+  },
+  "nav": { "skip": "ወደ ዋናው ይዘት ዝለል", "home": "መነሻ", "services": "አገልግሎቶች" },
+  "lang": { "label": "ቋንቋ" },
+  "home": {
+    "title": "የመንግሥት አገልግሎቶች በአንድ ቦታ",
+    "lead": "አገልግሎቶችን ይፈልጉ፣ መስፈርቶችን ይረዱ፣ ማመልከቻዎን ይከታተሉ።",
+    "cta": "አገልግሎቶችን ተመልከት",
+    "today": "ዛሬ",
+    "ethiopianCalendar": "የኢትዮጵያ ቀን አቆጣጠር",
+    "gregorianCalendar": "የግሪጎሪያን ቀን አቆጣጠር"
+  },
+  "services": {
+    "title": "የአገልግሎት ማውጫ",
+    "search": "ፈልግ",
+    "searchPlaceholder": "አገልግሎት ይፈልጉ",
+    "category": "ምድብ",
+    "allCategories": "ሁሉም ምድቦች",
+    "empty": "ምንም አገልግሎት አልተገኘም።",
+    "loading": "በመጫን ላይ…",
+    "error": "አገልግሎቶችን መጫን አልተቻለም።",
+    "retry": "እንደገና ሞክር",
+    "pagination": "ገጾች",
+    "prev": "ቀዳሚ",
+    "next": "ቀጣይ",
+    "page": "ገጽ {page} ከ {total}"
+  },
+  "status": { "Available": "ይገኛል", "Planned": "ታቅዷል", "Suspended": "ተቋርጧል" },
+  "category": {
+    "IdentityAndCivilRegistration": "መታወቂያና የሲቪል ምዝገባ",
+    "RevenueAndTax": "ገቢና ግብር",
+    "Immigration": "ኢሚግሬሽን",
+    "Education": "ትምህርት",
+    "Healthcare": "ጤና",
+    "BusinessRegistration": "የንግድ ምዝገባ",
+    "Transportation": "ትራንስፖርት",
+    "LandAndProperty": "መሬትና ንብረት",
+    "LocalGovernment": "የአካባቢ አስተዳደር"
+  },
+  "kind": { "Eligibility": "ማን ማመልከት ይችላል", "Document": "የሚያስፈልጉ ሰነዶች", "Step": "ደረጃዎች" },
+  "service": {
+    "back": "ወደ ማውጫ ተመለስ",
+    "agency": "ኃላፊ ተቋም",
+    "plannedNotice": "ይህ አገልግሎት ታቅዷል፤ ገና አይገኝም።",
+    "applyNotYet": "በዚህ የሙከራ ስሪት ውስጥ የመስመር ላይ ማመልከቻ ገና አልተከፈተም።",
+    "notFound": "አገልግሎቱ አልተገኘም።"
+  },
+  "notFound": { "title": "ገጹ አልተገኘም", "body": "የፈለጉት ገጽ የለም።" },
+  "calendar": {
+    "era": "ዓ.ም.",
+    "month": {
+      "1": "መስከረም", "2": "ጥቅምት", "3": "ኅዳር", "4": "ታኅሣሥ", "5": "ጥር", "6": "የካቲት", "7": "መጋቢት",
+      "8": "ሚያዝያ", "9": "ግንቦት", "10": "ሰኔ", "11": "ሐምሌ", "12": "ነሐሴ", "13": "ጳጉሜን"
+    }
+  }
+}

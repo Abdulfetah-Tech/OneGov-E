@@ -1,0 +1,249 @@
+:root {
+  --navy: #0b2545;
+  --green: #1b7f4b;
+  --green-dark: #145c37;
+  --ink: #16202c;
+  --muted: #4a5868;
+  --surface: #ffffff;
+  --bg: #f4f6f8;
+  --border: #d5dbe3;
+  --radius: 10px;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  /* System fonts first (zero download). Ethiopic fallbacks cover Amharic on most devices. */
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Ethiopic', 'Abyssinica SIL', 'Nyala', sans-serif;
+}
+
+a {
+  color: var(--navy);
+}
+
+:focus-visible {
+  outline: 3px solid #f2a900;
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--navy);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  z-index: 10;
+
+  &:focus {
+    left: 0;
+  }
+}
+
+.notice {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background: #fff4d6;
+  border-bottom: 1px solid #e6cf8f;
+  font-size: 0.9rem;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--navy);
+  color: #fff;
+
+  a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.6rem 0.25rem;
+    display: inline-block;
+    min-height: 44px;
+  }
+
+  nav {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  nav a.active {
+    border-bottom: 3px solid #7fd3a4;
+  }
+
+  .brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+}
+
+.languages {
+  display: flex;
+  gap: 0.25rem;
+
+  button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 0.75rem;
+    border: 1px solid #ffffff66;
+    background: transparent;
+    color: #fff;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font: inherit;
+
+    &[aria-pressed='true'] {
+      background: #fff;
+      color: var(--navy);
+      font-weight: 700;
+    }
+  }
+}
+
+main {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.footer {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.hero {
+  padding: 2rem 0 1rem;
+
+  h1 {
+    margin: 0 0 0.5rem;
+    color: var(--navy);
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+    line-height: 1.2;
+  }
+}
+
+.lead {
+  color: var(--muted);
+  font-size: 1.125rem;
+}
+
+.button,
+button {
+  min-height: 44px;
+  padding: 0 1.25rem;
+  border-radius: var(--radius);
+  font: inherit;
+  cursor: pointer;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  background: var(--green);
+  color: #fff;
+  text-decoration: none;
+  border: 0;
+
+  &:hover {
+    background: var(--green-dark);
+  }
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+
+  h2 {
+    margin: 0.5rem 0;
+    font-size: 1.15rem;
+  }
+}
+
+.grid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+
+  .card {
+    margin: 0;
+  }
+}
+
+.filters {
+  display: grid;
+  gap: 0.35rem 1rem;
+  grid-template-columns: 1fr;
+  margin-bottom: 1rem;
+
+  @media (min-width: 40rem) {
+    grid-template-columns: 2fr 1fr;
+    label:nth-of-type(2) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+
+  input,
+  select {
+    min-height: 44px;
+    padding: 0 0.75rem;
+    font: inherit;
+    border: 1px solid #8a96a5;
+    border-radius: var(--radius);
+    background: #fff;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: #e6e9ee;
+  color: var(--muted);
+
+  &.available {
+    background: #dff3e7;
+    color: var(--green-dark);
+    font-weight: 600;
+  }
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.pager {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+}

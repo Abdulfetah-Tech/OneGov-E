@@ -1,0 +1,16 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+.git/
+.github/
+.vs/
+.env
+.env.*
+!.env.example
+*.log
+TestResults/
+backend/tests/
+frontend/
+docs/

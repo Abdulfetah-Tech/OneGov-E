@@ -1,0 +1,60 @@
+{
+  "_meta": { "language": "English", "reviewStatus": "source" },
+  "app": {
+    "tagline": "One door to Ethiopia's government services",
+    "prototypeNotice": "Prototype: the information shown is sample data and is not connected to any real government system."
+  },
+  "nav": { "skip": "Skip to main content", "home": "Home", "services": "Services" },
+  "lang": { "label": "Language" },
+  "home": {
+    "title": "Government services in one place",
+    "lead": "Find a service, understand what it needs, and follow your application.",
+    "cta": "Browse services",
+    "today": "Today",
+    "ethiopianCalendar": "Ethiopian calendar",
+    "gregorianCalendar": "Gregorian calendar"
+  },
+  "services": {
+    "title": "Service directory",
+    "search": "Search",
+    "searchPlaceholder": "Search for a service",
+    "category": "Category",
+    "allCategories": "All categories",
+    "empty": "No services found.",
+    "loading": "Loading…",
+    "error": "Services could not be loaded.",
+    "retry": "Try again",
+    "pagination": "Pages",
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page {page} of {total}"
+  },
+  "status": { "Available": "Available", "Planned": "Planned", "Suspended": "Suspended" },
+  "category": {
+    "IdentityAndCivilRegistration": "Identity and civil registration",
+    "RevenueAndTax": "Revenue and tax",
+    "Immigration": "Immigration",
+    "Education": "Education",
+    "Healthcare": "Healthcare",
+    "BusinessRegistration": "Business registration",
+    "Transportation": "Transportation",
+    "LandAndProperty": "Land and property",
+    "LocalGovernment": "Local government"
+  },
+  "kind": { "Eligibility": "Who can apply", "Document": "Documents needed", "Step": "Steps" },
+  "service": {
+    "back": "Back to directory",
+    "agency": "Responsible agency",
+    "plannedNotice": "This service is planned and is not available yet.",
+    "applyNotYet": "Online applications are not enabled in this prototype yet.",
+    "notFound": "This service was not found."
+  },
+  "notFound": { "title": "Page not found", "body": "The page you are looking for does not exist." },
+  "calendar": {
+    "era": "E.C.",
+    "month": {
+      "1": "Meskerem", "2": "Tikimt", "3": "Hidar", "4": "Tahsas", "5": "Tir", "6": "Yekatit", "7": "Megabit",
+      "8": "Miazia", "9": "Ginbot", "10": "Sene", "11": "Hamle", "12": "Nehase", "13": "Pagume"
+    }
+  }
+}

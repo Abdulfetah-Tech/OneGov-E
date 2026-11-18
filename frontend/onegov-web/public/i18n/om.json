@@ -1,0 +1,60 @@
+{
+  "_meta": { "language": "Afaan Oromoo", "reviewStatus": "machine-draft", "note": "Needs native-speaker review before any official use." },
+  "app": {
+    "tagline": "Balbala tokko tajaajila mootummaa Itoophiyaatiif",
+    "prototypeNotice": "Sakatta'insa: odeeffannoon agarsiifame fakkeenya; sirna mootummaa dhugaa kamiyyuu waliin hin wal-qabatu."
+  },
+  "nav": { "skip": "Gara qabiyyee ijoo darbi", "home": "Fuula duraa", "services": "Tajaajiloota" },
+  "lang": { "label": "Afaan" },
+  "home": {
+    "title": "Tajaajiloota mootummaa bakka tokkotti",
+    "lead": "Tajaajila barbaadi, ulaagaalee hubadhu, iyyannoo kee hordofi.",
+    "cta": "Tajaajiloota ilaali",
+    "today": "Har'a",
+    "ethiopianCalendar": "Kaaleendarii Itoophiyaa",
+    "gregorianCalendar": "Kaaleendarii Giregoorii"
+  },
+  "services": {
+    "title": "Tarreeffama tajaajilootaa",
+    "search": "Barbaadi",
+    "searchPlaceholder": "Tajaajila barbaadi",
+    "category": "Gosa",
+    "allCategories": "Gosa hundaa",
+    "empty": "Tajaajilli hin argamne.",
+    "loading": "Fe'amaa jira…",
+    "error": "Tajaajiloota fe'uun hin danda'amne.",
+    "retry": "Irra deebi'ii yaali",
+    "pagination": "Fuulota",
+    "prev": "Duraa",
+    "next": "Itti aanu",
+    "page": "Fuula {page} kan {total}"
+  },
+  "status": { "Available": "Ni argama", "Planned": "Karoorfameera", "Suspended": "Addaan citeera" },
+  "category": {
+    "IdentityAndCivilRegistration": "Eenyummaa fi galmee siivilii",
+    "RevenueAndTax": "Galiifi gibira",
+    "Immigration": "Imigireeshinii",
+    "Education": "Barnoota",
+    "Healthcare": "Fayyaa",
+    "BusinessRegistration": "Galmee daldalaa",
+    "Transportation": "Geejjiba",
+    "LandAndProperty": "Lafaafi qabeenya",
+    "LocalGovernment": "Bulchiinsa naannoo"
+  },
+  "kind": { "Eligibility": "Eenyutu iyyachuu danda'a", "Document": "Sanadoota barbaachisan", "Step": "Tarkaanfiilee" },
+  "service": {
+    "back": "Gara tarreeffamaatti deebi'i",
+    "agency": "Dhaabbata itti gaafatamaa",
+    "plannedNotice": "Tajaajilli kun karoorfameera; amma hin argamu.",
+    "applyNotYet": "Sakatta'insa kana keessatti iyyannoon toora interneetii amma hin banamne.",
+    "notFound": "Tajaajilli hin argamne."
+  },
+  "notFound": { "title": "Fuulli hin argamne", "body": "Fuulli barbaaddu hin jiru." },
+  "calendar": {
+    "era": "E.C.",
+    "month": {
+      "1": "Fulbaana", "2": "Onkoloolessa", "3": "Sadaasa", "4": "Muddee", "5": "Amajjii", "6": "Guraandhala", "7": "Bitooteessa",
+      "8": "Ebla", "9": "Caamsaa", "10": "Waxabajjii", "11": "Adoolessa", "12": "Hagayya", "13": "Qaamee"
+    }
+  }
+}
