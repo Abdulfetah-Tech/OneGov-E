@@ -28,7 +28,8 @@ internal sealed class ServiceApplicationConfiguration : IEntityTypeConfiguration
         builder.HasOne<Agency>().WithMany().HasForeignKey(a => a.AgencyId).OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(a => a.History).WithOne().HasForeignKey(h => h.ApplicationId).OnDelete(DeleteBehavior.Cascade);
         builder.Navigation(a => a.History).UsePropertyAccessMode(PropertyAccessMode.Field);
-        builder.HasQueryFilter(a => !a.IsDeleted);
+
+        // The query filter (soft delete plus who may see the row) lives in OneGovDbContext, because it depends on the caller.
     }
 }
 

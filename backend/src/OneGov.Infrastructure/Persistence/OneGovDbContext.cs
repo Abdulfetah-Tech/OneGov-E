@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using OneGov.Application.Identity;
 using OneGov.Domain.Applications;
 using OneGov.Domain.Audit;
 using OneGov.Domain.Common;
@@ -9,7 +10,9 @@ using OneGov.Infrastructure.Identity;
 
 namespace OneGov.Infrastructure.Persistence;
 
-public sealed class OneGovDbContext(DbContextOptions<OneGovDbContext> options, TimeProvider timeProvider)
+/// <param name="dataScope">Who is asking. When missing (design time, tests that do not care) applications are not visible.</param>
+public sealed class OneGovDbContext(
+    DbContextOptions<OneGovDbContext> options, TimeProvider timeProvider, IDataScopeAccessor? dataScope = null)
     : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
     public DbSet<Agency> Agencies => Set<Agency>();
@@ -27,7 +30,17 @@ public sealed class OneGovDbContext(DbContextOptions<OneGovDbContext> options, T
         // Identity's own mapping first, then ours, so our table names win.
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OneGovDbContext).Assembly);
+
+        // Isolation in the data layer: a caller only ever sees their own applications and, for staff, their own agency's.
+        // This must stay in the context so EF can read the current caller per query. Fails closed when no scope is known.
+        modelBuilder.Entity<ServiceApplication>().HasQueryFilter(a =>
+            !a.IsDeleted
+            && (CurrentScope.IsUnrestricted
+                || a.CitizenId == CurrentScope.CitizenId
+                || a.AgencyId == CurrentScope.AgencyId));
     }
+
+    private DataScope CurrentScope => dataScope?.Current ?? DataScope.None;
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {

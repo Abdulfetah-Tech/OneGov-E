@@ -23,6 +23,8 @@ builder.Host.UseSerilog((context, logger) => logger
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<OneGov.Application.Identity.IDataScopeAccessor, HttpDataScopeAccessor>();
 builder.Services.AddOneGovJwtAuthentication();
 builder.Services.AddPermissionAuthorization();
 builder.Services.AddControllers();
