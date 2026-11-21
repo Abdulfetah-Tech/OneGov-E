@@ -20,7 +20,7 @@ Status of each control. "Planned" items are not implemented yet and must not be 
 | Breached-password check, email verification, password reset, step-up (re-enter password) for MFA enrolment, TOTP replay protection | planned (Phase 3 slice B / Phase 4) |
 | Permission policies on endpoints | implemented in slice A (`audit:read`); other permissions are enforced as their endpoints arrive |
 | Agency isolation in the data layer (PostgreSQL row-level security evaluated) | planned (Phase 3 slice B) |
-| Database trigger forbidding UPDATE/DELETE on `audit_entries` | planned (Phase 3 slice B) |
+| Database trigger forbidding UPDATE/DELETE/TRUNCATE on `audit_entries`. The table owner can still disable it, so production must run the API as a role that does not own the table; the hash chain detects tampering either way | implemented in slice B (awaiting local verification) |
 | Encrypted document storage, virus-scan adapter, signed short-lived download links | planned (Phase 4) |
 | Dependency and container vulnerability scanning in CI | planned (Phase 8) |
 | TLS termination, HSTS, secrets manager, encrypted backups, restore test | planned (Phase 9) |

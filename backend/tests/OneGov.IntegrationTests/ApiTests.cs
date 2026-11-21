@@ -108,12 +108,31 @@ public sealed class ApiTests(PostgresApiFixture fixture)
         await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync());
         db.ChangeTracker.Clear();
 
-        // ...and tampering directly in the database is still detected.
+        // ...and tampering by someone who defeats the database trigger is still detected by the hash chain.
+        // Only the table owner can do this, which is why the production app should connect as a different role.
+        await db.Database.ExecuteSqlRawAsync("ALTER TABLE audit_entries DISABLE TRIGGER audit_entries_append_only");
         await db.Database.ExecuteSqlAsync($"UPDATE audit_entries SET actor = 'mallory' WHERE sequence = 2");
+        await db.Database.ExecuteSqlRawAsync("ALTER TABLE audit_entries ENABLE TRIGGER audit_entries_append_only");
         var verification = await audit.VerifyAsync(CancellationToken.None);
 
         Assert.False(verification.IsValid);
         Assert.Equal(2, verification.FirstBrokenSequence);
+    }
+
+    [Theory]
+    [InlineData("UPDATE audit_entries SET actor = 'mallory'")]
+    [InlineData("DELETE FROM audit_entries")]
+    [InlineData("TRUNCATE audit_entries")]
+    public async Task The_database_itself_refuses_to_change_audit_entries(string sql)
+    {
+        await using var scope = fixture.Factory.Services.CreateAsyncScope();
+        var audit = scope.ServiceProvider.GetRequiredService<IAuditLog>();
+        var db = scope.ServiceProvider.GetRequiredService<OneGovDbContext>();
+        await audit.AppendAsync("officer-3", "citizen.read", "citizen/3", null, CancellationToken.None);
+
+        var error = await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlRawAsync(sql));
+
+        Assert.Contains("append-only", error.ToString());
     }
 
     [Fact]
