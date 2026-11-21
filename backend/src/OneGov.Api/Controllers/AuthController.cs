@@ -57,18 +57,20 @@ public sealed class AuthController(IAuthService auth) : ControllerBase
         return result.IsSuccess ? NoContent() : this.ToProblem(result.Error!);
     }
 
+    /// <summary>Starts enrolment. The current password must be sent again.</summary>
     [HttpPost("mfa/enroll")]
     [Authorize]
     [ProducesResponseType<MfaEnrollmentDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> BeginMfaEnrollment(CancellationToken cancellationToken)
+    public async Task<IActionResult> BeginMfaEnrollment([FromBody] BeginMfaRequest request, CancellationToken cancellationToken)
     {
         if (User.GetUserId() is not { } userId)
         {
             return Unauthorized();
         }
 
-        var result = await auth.BeginMfaEnrollmentAsync(userId, cancellationToken);
+        var result = await auth.BeginMfaEnrollmentAsync(userId, request, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : this.ToProblem(result.Error!);
     }
 

@@ -16,8 +16,9 @@ Status of each control. "Planned" items are not implemented yet and must not be 
 | TOTP MFA with single-use recovery codes; wrong codes count toward lockout | implemented in slice A, awaiting local verification |
 | Short-lived (10 min) signed access tokens; rotating refresh tokens stored as hashes, family revoked on reuse, 30-day absolute limit | implemented in slice A, awaiting local verification |
 | Staff-only permissions require a token issued after MFA; separation of duties between review, verify and decide | implemented in slice A, awaiting local verification |
+| MFA enrolment re-checks the password; wrong attempts count toward lockout | implemented in slice B (awaiting local verification) |
 | Stricter rate limit on sign-in, registration and token endpoints; auth responses `no-store` | implemented in slice A, awaiting local verification |
-| Breached-password check, email verification, password reset, step-up (re-enter password) for MFA enrolment, TOTP replay protection | planned (Phase 3 slice B / Phase 4) |
+| Breached-password check, email verification, password reset, TOTP replay protection | planned (Phase 3 slice B / Phase 4) |
 | Permission policies on endpoints | implemented in slice A (`audit:read`); other permissions are enforced as their endpoints arrive |
 | Agency isolation in the data layer (PostgreSQL row-level security evaluated) | planned (Phase 3 slice B) |
 | Database trigger forbidding UPDATE/DELETE/TRUNCATE on `audit_entries`. The table owner can still disable it, so production must run the API as a role that does not own the table; the hash chain detects tampering either way | implemented in slice B (awaiting local verification) |

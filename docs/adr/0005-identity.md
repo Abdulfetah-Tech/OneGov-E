@@ -23,7 +23,6 @@ Open: partner onboarding, staff authentication policy, session lifetime.
 - Email addresses are not verified and there is no password reset yet (needs the Phase 4 notification outbox). Registration reveals whether an email is taken; the stricter rate limit is the only mitigation until then.
 - Access tokens stay valid for up to 10 minutes after logout, a role change or an account being disabled.
 - A TOTP code can be reused within its time window (Identity does not track used codes).
-- MFA enrolment only needs a valid access token. Re-entering the password before enrolment is planned, so a stolen token cannot be used to take over an account's second factor.
 - A client that loses the response to a refresh and retries with the old token is signed out (the price of reuse detection).
 - Refresh tokens live in the browser. Whether to move them to an HttpOnly cookie is decided when the Angular login screens are built.
 - HS256 with a shared secret is fine for one API. Move to asymmetric keys if other services must validate tokens.

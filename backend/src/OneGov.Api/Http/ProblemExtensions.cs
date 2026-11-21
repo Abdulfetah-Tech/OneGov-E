@@ -14,6 +14,7 @@ internal static class ProblemExtensions
         {
             AuthErrors.InvalidCredentials or AuthErrors.InvalidToken or AuthErrors.MfaRequired => StatusCodes.Status401Unauthorized,
             AuthErrors.EmailTaken or AuthErrors.MfaAlreadyEnabled => StatusCodes.Status409Conflict,
+            AuthErrors.ReauthenticationFailed => StatusCodes.Status403Forbidden,
             AuthErrors.NotFound => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status400BadRequest,
         };

@@ -25,6 +25,7 @@ public sealed class AuthService(
     IValidator<LoginRequest> loginValidator,
     IValidator<RefreshRequest> refreshValidator,
     IValidator<LogoutRequest> logoutValidator,
+    IValidator<BeginMfaRequest> beginMfaValidator,
     IValidator<ConfirmMfaRequest> confirmMfaValidator) : IAuthService
 {
     private const int RecoveryCodeCount = 10;
@@ -202,12 +203,32 @@ public sealed class AuthService(
             : Result<UserProfileDto>.Success(await ToProfileAsync(user));
     }
 
-    public async Task<Result<MfaEnrollmentDto>> BeginMfaEnrollmentAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<Result<MfaEnrollmentDto>> BeginMfaEnrollmentAsync(
+        Guid userId, BeginMfaRequest request, CancellationToken cancellationToken)
     {
+        var validation = await beginMfaValidator.ValidateAsync(request, cancellationToken);
+        if (!validation.IsValid)
+        {
+            return Result<MfaEnrollmentDto>.Failure(Invalid(validation));
+        }
+
         var user = await FindActiveAsync(userId);
         if (user is null)
         {
             return Result<MfaEnrollmentDto>.Failure(AuthErrors.NotFound, "Account not found.");
+        }
+
+        // Re-check the password. Wrong attempts count toward lockout, so this endpoint cannot be used to guess it.
+        if (await users.IsLockedOutAsync(user) || !await users.CheckPasswordAsync(user, request.Password))
+        {
+            if (!await users.IsLockedOutAsync(user))
+            {
+                await users.AccessFailedAsync(user);
+            }
+
+            await AuditAsync(user, "auth.mfa_enroll_reauth_failed", cancellationToken);
+            return Result<MfaEnrollmentDto>.Failure(
+                AuthErrors.ReauthenticationFailed, "The password is not correct.");
         }
 
         if (user.TwoFactorEnabled)

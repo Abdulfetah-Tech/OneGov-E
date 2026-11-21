@@ -240,7 +240,7 @@ public sealed class AuthTests(PostgresApiFixture fixture)
         Assert.Equal(HttpStatusCode.Forbidden, (await Authenticated(passwordOnly).GetAsync("/api/v1/audit/verify")).StatusCode);
 
         // Enrol an authenticator app.
-        var enrol = await Post(Authenticated(passwordOnly), "/api/v1/auth/mfa/enroll", new { });
+        var enrol = await Post(Authenticated(passwordOnly), "/api/v1/auth/mfa/enroll", new { password = Password });
         Assert.Equal(HttpStatusCode.OK, enrol.StatusCode);
         var enrolment = await Json(enrol);
         var key = enrolment.GetProperty("sharedKey").GetString()!;
@@ -279,14 +279,28 @@ public sealed class AuthTests(PostgresApiFixture fixture)
     }
 
     [Fact]
+    public async Task Starting_enrolment_needs_the_current_password()
+    {
+        var email = await RegisterAsync();
+        var token = (await LoginOkAsync(email)).GetProperty("accessToken").GetString()!;
+
+        var wrong = await Post(Authenticated(token), "/api/v1/auth/mfa/enroll", new { password = "Wrong-Password-1" });
+        var missing = await Post(Authenticated(token), "/api/v1/auth/mfa/enroll", new { });
+
+        Assert.Equal(HttpStatusCode.Forbidden, wrong.StatusCode);
+        Assert.Equal("identity.reauthentication_failed", (await Json(wrong)).GetProperty("type").GetString());
+        Assert.Equal(HttpStatusCode.BadRequest, missing.StatusCode);
+    }
+
+    [Fact]
     public async Task Enrolment_cannot_be_started_twice_once_enabled()
     {
         var email = await RegisterAsync();
         var token = (await LoginOkAsync(email)).GetProperty("accessToken").GetString()!;
-        var key = (await Json(await Post(Authenticated(token), "/api/v1/auth/mfa/enroll", new { }))).GetProperty("sharedKey").GetString()!;
+        var key = (await Json(await Post(Authenticated(token), "/api/v1/auth/mfa/enroll", new { password = Password }))).GetProperty("sharedKey").GetString()!;
         await Post(Authenticated(token), "/api/v1/auth/mfa/confirm", new { code = Totp.Compute(key, DateTimeOffset.UtcNow) });
 
-        var again = await Post(Authenticated(token), "/api/v1/auth/mfa/enroll", new { });
+        var again = await Post(Authenticated(token), "/api/v1/auth/mfa/enroll", new { password = Password });
 
         Assert.Equal(HttpStatusCode.Conflict, again.StatusCode);
     }

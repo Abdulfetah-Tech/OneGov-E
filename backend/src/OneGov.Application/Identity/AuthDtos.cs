@@ -9,6 +9,9 @@ public sealed record RefreshRequest(string RefreshToken);
 
 public sealed record LogoutRequest(string RefreshToken);
 
+/// <summary>Starting MFA enrolment re-checks the account password, so a stolen access token alone cannot enrol a second factor.</summary>
+public sealed record BeginMfaRequest(string Password);
+
 public sealed record ConfirmMfaRequest(string Code);
 
 public sealed record TokenResponse(

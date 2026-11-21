@@ -15,7 +15,8 @@ public interface IAuthService
 
     Task<Result<UserProfileDto>> GetProfileAsync(Guid userId, CancellationToken cancellationToken);
 
-    Task<Result<MfaEnrollmentDto>> BeginMfaEnrollmentAsync(Guid userId, CancellationToken cancellationToken);
+    Task<Result<MfaEnrollmentDto>> BeginMfaEnrollmentAsync(
+        Guid userId, BeginMfaRequest request, CancellationToken cancellationToken);
 
     Task<Result<MfaConfirmedDto>> ConfirmMfaEnrollmentAsync(
         Guid userId, ConfirmMfaRequest request, CancellationToken cancellationToken);
@@ -31,6 +32,7 @@ public static class AuthErrors
     public const string MfaRequired = "identity.mfa_required";
     public const string InvalidToken = "identity.invalid_token";
     public const string InvalidOtp = "identity.invalid_otp";
+    public const string ReauthenticationFailed = "identity.reauthentication_failed";
     public const string MfaAlreadyEnabled = "identity.mfa_already_enabled";
     public const string MfaNotStarted = "identity.mfa_not_started";
     public const string NotFound = "identity.not_found";

@@ -37,6 +37,11 @@ public sealed class LogoutRequestValidator : AbstractValidator<LogoutRequest>
     public LogoutRequestValidator() => RuleFor(r => r.RefreshToken).NotEmpty().MaximumLength(200);
 }
 
+public sealed class BeginMfaRequestValidator : AbstractValidator<BeginMfaRequest>
+{
+    public BeginMfaRequestValidator() => RuleFor(r => r.Password).NotEmpty().MaximumLength(128);
+}
+
 public sealed class ConfirmMfaRequestValidator : AbstractValidator<ConfirmMfaRequest>
 {
     public ConfirmMfaRequestValidator() => RuleFor(r => r.Code).NotEmpty().MaximumLength(16);
