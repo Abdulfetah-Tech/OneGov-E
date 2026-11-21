@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OneGov.Infrastructure.Identity;
 using OneGov.Infrastructure.Persistence;
 
 namespace OneGov.Infrastructure.Services;
@@ -22,9 +23,13 @@ public static class DatabaseInitializer
             await db.Database.MigrateAsync(cancellationToken);
         }
 
+        // Roles are required for registration to work, so they are created whether or not sample data is wanted.
+        await IdentitySeeder.SeedRolesAsync(db, cancellationToken);
+
         if (seedDevelopmentData)
         {
             await DevelopmentDataSeeder.SeedAsync(db, cancellationToken);
+            await IdentitySeeder.SeedDevelopmentUsersAsync(db, cancellationToken);
         }
     }
 }

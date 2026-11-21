@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OneGov.Domain.Applications;
 using OneGov.Domain.Audit;
 using OneGov.Domain.Common;
+using OneGov.Domain.Identity;
 using OneGov.Domain.Registry;
+using OneGov.Infrastructure.Identity;
 
 namespace OneGov.Infrastructure.Persistence;
 
 public sealed class OneGovDbContext(DbContextOptions<OneGovDbContext> options, TimeProvider timeProvider)
-    : DbContext(options)
+    : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
     public DbSet<Agency> Agencies => Set<Agency>();
 
@@ -17,8 +20,14 @@ public sealed class OneGovDbContext(DbContextOptions<OneGovDbContext> options, T
 
     public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Identity's own mapping first, then ours, so our table names win.
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OneGovDbContext).Assembly);
+    }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {

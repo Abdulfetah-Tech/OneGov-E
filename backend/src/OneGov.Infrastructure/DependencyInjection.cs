@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OneGov.Application.Audit;
+using OneGov.Application.Identity;
 using OneGov.Application.Registry;
+using OneGov.Infrastructure.Identity;
 using OneGov.Infrastructure.Persistence;
 using OneGov.Infrastructure.Services;
 
@@ -23,6 +26,32 @@ public static class DependencyInjection
             DbContextConfiguration.Configure(options, connectionString);
         });
 
+        // Identity's token providers need data protection. Keys persist in the api_keys volume under Docker.
+        services.AddDataProtection();
+
+        services
+            .AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+
+                // Length over composition rules. A breached-password check is planned (docs/SECURITY_BASELINE.md).
+                options.Password.RequiredLength = 10;
+                options.Password.RequiredUniqueChars = 5;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+            })
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<OneGovDbContext>()
+            .AddDefaultTokenProviders();
+
+        services.AddSingleton<JwtTokenIssuer>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IServiceCatalog, ServiceCatalog>();
         services.AddScoped<IAuditLog, AuditLog>();
         return services;

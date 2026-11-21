@@ -1,16 +1,29 @@
 # Development progress
 
 ## Phase 2: Foundation (delivered 2026-11-15)
-Written without access to a .NET SDK, Docker or npm. **Nothing has been compiled or run yet.** Logic that could be checked
-independently was: the Ethiopian calendar algorithm (known dates + 73,000-day round trip) and the i18n key check.
+Verified locally on 2026-11-19: build succeeds, 55 domain tests and 13 integration tests pass, the migration exists, the Angular app
+builds and its 10 tests pass, and both Docker images build.
 
-Verification checklist (tick each when done)
-- [ ] `dotnet build OneGov.slnx` succeeds
-- [ ] `dotnet ef migrations add InitialFoundation ...` creates the migration
+Still to confirm by hand (PostgreSQL port 5432 is blocked by Windows on the developer machine, so use `POSTGRES_PORT=5433`)
+- [ ] `docker compose up -d --build` starts postgres, api, web; http://localhost:8080 shows the directory
+- [ ] `dotnet run --project backend/src/OneGov.Api` starts with the user-secrets connection string (port 5433)
+
+## Phase 3, slice A: Identity (delivered 2026-11-20)
+Written without a .NET SDK, so **not yet compiled**. The TOTP test helper was checked against the RFC 6238 test vector in Python.
+
+New: domain roles, permissions and refresh-token rotation; `IAuthService` with an ASP.NET Core Identity implementation; JWT bearer
+authentication; permission policies; endpoints `/api/v1/auth/{register,login,refresh,logout,mfa/enroll,mfa/confirm}`, `/api/v1/me`,
+`/api/v1/audit/verify`; seeded roles and development accounts; 15 domain tests and about 18 integration tests.
+
+Verification checklist
+- [ ] `dotnet restore OneGov.slnx` (if a package version is not found, use the version restore suggests)
+- [ ] `dotnet build OneGov.slnx` succeeds (also try `-p:TreatWarningsAsErrors=true`, which CI uses)
+- [ ] `dotnet ef migrations add IdentityAndSessions ...` creates a migration; open it and check it creates `users`, `roles`, `user_roles`, `refresh_tokens` and does not drop anything
 - [ ] `dotnet test backend/tests/OneGov.Domain.Tests` passes
 - [ ] `dotnet test backend/tests/OneGov.IntegrationTests` passes (Docker running)
-- [ ] API starts; `/health/ready` healthy; `/api/v1/services` returns the seeded services
-- [ ] In `frontend/onegov-web`: `npm ci`, `npm run i18n:check`, `npm run build`, `npm test` pass
-- [ ] `docker compose up -d --build` starts postgres, api, web; http://localhost:8080 shows the directory
+- [ ] API starts; sign in as `officer@example.test`; `GET /api/v1/me` works; `GET /api/v1/audit/verify` is refused until MFA is enrolled
 
 Report any failure with the exact error text.
+
+Slice B (next): agency scoping in the data layer, database trigger making `audit_entries` append-only, password re-entry for MFA
+enrolment, Fayda adapter with a mock, then the Angular sign-in screens.

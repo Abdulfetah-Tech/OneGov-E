@@ -5,8 +5,8 @@ Estimates: one full-time developer with an AI coding agent. Not included: legal 
 | # | Phase | Status | Contents |
 |---|---|---|---|
 | 1 | Discovery | done | Audit, requirements, architecture, risks (separate documents) |
-| 2 | Foundation | **delivered, awaiting local verification** | Solution, domain core, registry API, audit chain, Docker, CI, Angular shell, i18n, calendar |
-| 3 | Identity and security (2 wk) | next | Registration, login, TOTP MFA, refresh-token rotation, roles and permissions, agency scoping in the data layer, Fayda OIDC adapter (mock first) |
+| 2 | Foundation | done (verified 2026-11-19: 55 + 13 backend tests, frontend build and 10 tests) | Solution, domain core, registry API, audit chain, Docker, CI, Angular shell, i18n, calendar |
+| 3 | Identity and security (2 wk) | **in progress.** Slice A delivered (awaiting local verification): local accounts, login, lockout, TOTP MFA + recovery codes, JWT, refresh rotation with reuse detection, roles/permissions, staff-MFA enforcement. Slice B next: agency scoping, audit trigger, Fayda mock | Registration, login, TOTP MFA, refresh-token rotation, roles and permissions, agency scoping in the data layer, Fayda OIDC adapter (mock first) |
 | 4 | Workflow and documents (2 wk) | planned | Persisted applications on the workflow engine, reference numbers, document upload/storage, notifications, outbox |
 | 5 | Services (2 wk) | planned | Tax filing and ID renewal citizen flows (sample rules), dashboard, tracking |
 | 6 | Agency and admin (2.5 wk) | planned | Officer queues, verification, admin screens, integration adapters and mock agencies |

@@ -1,10 +1,13 @@
 using System.Threading.RateLimiting;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.RateLimiting;
 using OneGov.Api.Health;
 using OneGov.Api.Middleware;
+using OneGov.Api.Security;
 using OneGov.Application;
 using OneGov.Infrastructure;
+using OneGov.Infrastructure.Identity;
 using OneGov.Infrastructure.Persistence;
 using OneGov.Infrastructure.Services;
 using Scalar.AspNetCore;
@@ -20,6 +23,8 @@ builder.Host.UseSerilog((context, logger) => logger
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
+builder.Services.AddOneGovJwtAuthentication();
+builder.Services.AddPermissionAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
@@ -47,16 +52,31 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod()));
 
 // Partitioned by client IP. Behind a reverse proxy set ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
-// so the real client address is used, not the proxy's.
-builder.Services.AddRateLimiter(options =>
+// so the real client address is used, not the proxy's. Limits are read lazily so tests and deployments can override them.
+builder.Services.AddRateLimiter(options => options.RejectionStatusCode = StatusCodes.Status429TooManyRequests);
+builder.Services.AddOptions<RateLimiterOptions>().Configure<IConfiguration>((options, configuration) =>
 {
-    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    var globalLimit = configuration.GetValue("RateLimiting:GlobalPermitLimit", 100);
+    var authLimit = configuration.GetValue("RateLimiting:AuthPermitLimit", 10);
+
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
         RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             _ => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 100,
+                PermitLimit = globalLimit,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                AutoReplenishment = true,
+            }));
+
+    // Sign-in, registration and token endpoints get a much tighter limit than the rest of the API.
+    options.AddPolicy("auth", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = authLimit,
                 Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0,
                 AutoReplenishment = true,
@@ -64,6 +84,9 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+// Fail fast on a missing or weak signing key instead of on the first sign-in.
+_ = app.Services.GetRequiredService<JwtOptions>();
 
 app.UseExceptionHandler();
 app.Use(async (context, next) =>
@@ -87,6 +110,8 @@ app.Use(async (context, next) =>
 app.UseSerilogRequestLogging();
 app.UseCors("ConfiguredOrigins");
 app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health/live", new HealthCheckOptions

@@ -12,9 +12,15 @@ Status of each control. "Planned" items are not implemented yet and must not be 
 | Rate limiting per client IP (needs forwarded headers behind a proxy) | done |
 | Audit entries append-only in the app and tamper-evident (hash chain, verified) | done |
 | No secrets in Git; connection string via user-secrets / environment | done |
-| Authentication, MFA, session/refresh-token handling | planned (Phase 3) |
-| Authorization with permissions and agency isolation in the data layer (PostgreSQL row-level security evaluated) | planned (Phase 3) |
-| Database trigger forbidding UPDATE/DELETE on `audit_entries` | planned (Phase 3) |
+| Local accounts: PBKDF2 hashing, length-based password policy (min 10), lockout after 5 failures for 15 min | implemented in slice A, awaiting local verification |
+| TOTP MFA with single-use recovery codes; wrong codes count toward lockout | implemented in slice A, awaiting local verification |
+| Short-lived (10 min) signed access tokens; rotating refresh tokens stored as hashes, family revoked on reuse, 30-day absolute limit | implemented in slice A, awaiting local verification |
+| Staff-only permissions require a token issued after MFA; separation of duties between review, verify and decide | implemented in slice A, awaiting local verification |
+| Stricter rate limit on sign-in, registration and token endpoints; auth responses `no-store` | implemented in slice A, awaiting local verification |
+| Breached-password check, email verification, password reset, step-up (re-enter password) for MFA enrolment, TOTP replay protection | planned (Phase 3 slice B / Phase 4) |
+| Permission policies on endpoints | implemented in slice A (`audit:read`); other permissions are enforced as their endpoints arrive |
+| Agency isolation in the data layer (PostgreSQL row-level security evaluated) | planned (Phase 3 slice B) |
+| Database trigger forbidding UPDATE/DELETE on `audit_entries` | planned (Phase 3 slice B) |
 | Encrypted document storage, virus-scan adapter, signed short-lived download links | planned (Phase 4) |
 | Dependency and container vulnerability scanning in CI | planned (Phase 8) |
 | TLS termination, HSTS, secrets manager, encrypted backups, restore test | planned (Phase 9) |

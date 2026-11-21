@@ -29,6 +29,7 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
       ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-onegov};Username=${POSTGRES_USER:-onegov};Password=${POSTGRES_PASSWORD}"
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-}
       Cors__AllowedOrigins__0: http://localhost:${WEB_PORT:-8080}
       Database__ApplyMigrationsOnStartup: "true"
       Database__SeedDevelopmentData: "true"
