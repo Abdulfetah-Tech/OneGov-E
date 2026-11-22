@@ -247,3 +247,87 @@ button:disabled {
   justify-content: center;
   margin-top: 1.5rem;
 }
+
+.header .account-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  a.active {
+    border-bottom: 3px solid #7fd3a4;
+  }
+}
+
+.header .link-button {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #ffffff66;
+}
+
+.form {
+  max-width: 28rem;
+  margin: 1rem 0;
+
+  .field {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+  }
+
+  input,
+  select {
+    min-height: 44px;
+    padding: 0 0.75rem;
+    font: inherit;
+    border: 1px solid #8a96a5;
+    border-radius: var(--radius);
+    background: #fff;
+  }
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.error {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.9rem;
+  background: #fdecec;
+  border: 1px solid #e3a3a3;
+  border-radius: var(--radius);
+  color: #7a1212;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 1rem;
+
+  dt {
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.key,
+.codes code {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background: #eef1f5;
+  border-radius: 6px;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  letter-spacing: 0.05em;
+}
+
+.codes {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+}

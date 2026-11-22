@@ -25,5 +25,9 @@ Verification checklist
 
 Report any failure with the exact error text.
 
-Slice B (next): agency scoping in the data layer, database trigger making `audit_entries` append-only, password re-entry for MFA
-enrolment, Fayda adapter with a mock, then the Angular sign-in screens.
+Slice B delivered and verified locally (81 domain and 39 integration tests): append-only audit trigger, password re-entry for MFA
+enrolment, agency data isolation.
+
+Angular sign-in slice (written, not yet run): sign-in with MFA code step, registration, account page with MFA setup and recovery codes,
+auth guard, token interceptor with single refresh-and-retry, translations (en, am, om; am and om are machine drafts).
+Still to do: Fayda mock sign-in, QR code for authenticator setup.

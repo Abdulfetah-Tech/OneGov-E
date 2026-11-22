@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/auth/auth.guard';
 import { ShellComponent } from './layout/shell.component';
 
 export const routes: Routes = [
@@ -16,6 +17,19 @@ export const routes: Routes = [
         path: 'services/:code',
         loadComponent: () =>
           import('./features/services/service-detail.page').then((m) => m.ServiceDetailPage),
+      },
+      {
+        path: 'sign-in',
+        loadComponent: () => import('./features/auth/sign-in.page').then((m) => m.SignInPage),
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('./features/auth/register.page').then((m) => m.RegisterPage),
+      },
+      {
+        path: 'account',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/auth/account.page').then((m) => m.AccountPage),
       },
       {
         path: '**',

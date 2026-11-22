@@ -56,5 +56,68 @@
       "1": "Meskerem", "2": "Tikimt", "3": "Hidar", "4": "Tahsas", "5": "Tir", "6": "Yekatit", "7": "Megabit",
       "8": "Miazia", "9": "Ginbot", "10": "Sene", "11": "Hamle", "12": "Nehase", "13": "Pagume"
     }
+  },
+  "auth": {
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "displayName": "Full name",
+    "language": "Preferred language",
+    "passwordHint": "At least 10 characters. A long phrase is better than a short complicated one.",
+    "otp": "Verification code",
+    "otpHint": "Enter the 6-digit code from your authenticator app, or a recovery code.",
+    "signOut": "Sign out",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "signIn": {
+      "title": "Sign in",
+      "submit": "Sign in"
+    },
+    "register": {
+      "title": "Create an account",
+      "submit": "Create account"
+    }
+  },
+  "account": {
+    "title": "My account",
+    "email": "Email",
+    "roles": "Roles",
+    "mfaTitle": "Two-step verification",
+    "mfaOn": "Two-step verification is on.",
+    "mfaOff": "Two-step verification is off. We recommend turning it on. It is required for staff accounts.",
+    "mfaStaffWarning": "Your role needs two-step verification before you can use staff features.",
+    "mfaStart": "Set up two-step verification",
+    "mfaPasswordPrompt": "Enter your password to continue.",
+    "mfaContinue": "Continue",
+    "mfaScanTitle": "Add this key to your authenticator app",
+    "mfaKeyLabel": "Setup key",
+    "mfaKeyHelp": "Open your authenticator app, choose to add an account, and enter this key by hand. Choose the time-based option.",
+    "mfaCodePrompt": "Then enter the 6-digit code the app shows.",
+    "mfaConfirm": "Turn on",
+    "mfaRecoveryTitle": "Save your recovery codes",
+    "mfaRecoveryWarning": "If you lose your phone, each code works once. They are shown only now. Keep them somewhere safe and private.",
+    "mfaDone": "I have saved them"
+  },
+  "role": {
+    "citizen": "Citizen",
+    "officer": "Reviewing officer",
+    "approver": "Approver",
+    "agency_admin": "Agency administrator",
+    "platform_admin": "Platform administrator"
+  },
+  "error": {
+    "required": "Please fill in all fields.",
+    "passwordMismatch": "The passwords do not match.",
+    "invalid_credentials": "The email or password is incorrect, or the account is temporarily locked.",
+    "invalid_otp": "The code is not correct.",
+    "email_taken": "An account with this email already exists.",
+    "weak_password": "The password is too weak. It needs at least 10 characters.",
+    "invalid_request": "Some of the information is not valid. Please check it.",
+    "reauthentication_failed": "The password is not correct.",
+    "mfa_already_enabled": "Two-step verification is already on.",
+    "mfa_not_started": "Start the setup before confirming a code.",
+    "rate_limited": "Too many attempts. Please wait a moment and try again.",
+    "network": "The server could not be reached. Check your connection.",
+    "unknown": "Something went wrong. Please try again."
   }
 }

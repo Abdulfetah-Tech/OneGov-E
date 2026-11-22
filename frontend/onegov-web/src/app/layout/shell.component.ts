@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../core/auth/auth.service';
 import { I18nService, LANG_LABELS, Lang, SUPPORTED_LANGS } from '../core/i18n/i18n.service';
 
 @Component({
@@ -20,6 +21,16 @@ import { I18nService, LANG_LABELS, Lang, SUPPORTED_LANGS } from '../core/i18n/i1
         }}</a>
         <a routerLink="/services" routerLinkActive="active">{{ i18n.t('nav.services') }}</a>
       </nav>
+
+      <div class="account-links">
+        @if (auth.user(); as user) {
+          <a routerLink="/account" routerLinkActive="active">{{ user.displayName }}</a>
+          <button type="button" class="link-button" (click)="signOut()">{{ i18n.t('auth.signOut') }}</button>
+        } @else {
+          <a routerLink="/sign-in" routerLinkActive="active">{{ i18n.t('auth.signIn.title') }}</a>
+          <a routerLink="/register" routerLinkActive="active">{{ i18n.t('auth.register.title') }}</a>
+        }
+      </div>
 
       <div class="languages" role="group" [attr.aria-label]="i18n.t('lang.label')">
         @for (code of langs; track code) {
@@ -44,10 +55,17 @@ import { I18nService, LANG_LABELS, Lang, SUPPORTED_LANGS } from '../core/i18n/i1
 })
 export class ShellComponent {
   protected readonly i18n = inject(I18nService);
+  protected readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   protected readonly langs = SUPPORTED_LANGS;
   protected readonly labels = LANG_LABELS;
 
   protected choose(lang: Lang): void {
     void this.i18n.use(lang);
+  }
+
+  protected async signOut(): Promise<void> {
+    await this.auth.logout();
+    await this.router.navigateByUrl('/');
   }
 }

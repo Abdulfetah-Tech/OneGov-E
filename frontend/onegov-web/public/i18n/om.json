@@ -56,5 +56,68 @@
       "1": "Fulbaana", "2": "Onkoloolessa", "3": "Sadaasa", "4": "Muddee", "5": "Amajjii", "6": "Guraandhala", "7": "Bitooteessa",
       "8": "Ebla", "9": "Caamsaa", "10": "Waxabajjii", "11": "Adoolessa", "12": "Hagayya", "13": "Qaamee"
     }
+  },
+  "auth": {
+    "email": "Teessoo imeelii",
+    "password": "Jecha icciitii",
+    "confirmPassword": "Jecha icciitii mirkaneessi",
+    "displayName": "Maqaa guutuu",
+    "language": "Afaan filatamaa",
+    "passwordHint": "Yoo xiqqaate arfii 10. Hima dheeraan jecha gabaabaa wal-xaxaa caalaa gaarii dha.",
+    "otp": "Koodii mirkaneessaa",
+    "otpHint": "Koodii lakkoofsa 6 appii mirkaneessituu keessanii ykn koodii deebi'ee argachuu galchaa.",
+    "signOut": "Ba'i",
+    "noAccount": "Akkaawuntii hin qabduu?",
+    "haveAccount": "Akkaawuntii qabduu?",
+    "signIn": {
+      "title": "Seeni",
+      "submit": "Seeni"
+    },
+    "register": {
+      "title": "Akkaawuntii uumi",
+      "submit": "Akkaawuntii uumi"
+    }
+  },
+  "account": {
+    "title": "Akkaawuntii koo",
+    "email": "Imeelii",
+    "roles": "Gahee",
+    "mfaTitle": "Mirkaneessa sadarkaa lama",
+    "mfaOn": "Mirkaneessi sadarkaa lama banameera.",
+    "mfaOff": "Mirkaneessi sadarkaa lama cufameera. Akka banattan isin gorsina. Akkaawuntiiwwan hojjettootaaf dirqama.",
+    "mfaStaffWarning": "Gaheen keessan mirkaneessa sadarkaa lama barbaada; amaloota hojjettootaa fayyadamuu keessan dura banaa.",
+    "mfaStart": "Mirkaneessa sadarkaa lama qopheessi",
+    "mfaPasswordPrompt": "Itti fufuuf jecha icciitii keessan galchaa.",
+    "mfaContinue": "Itti fufi",
+    "mfaScanTitle": "Furtuu kana appii mirkaneessituu keessanitti dabalaa",
+    "mfaKeyLabel": "Furtuu qindaa'inaa",
+    "mfaKeyHelp": "Appii mirkaneessituu keessan banaa, akkaawuntii dabaluu filadhaa, furtuu kana harkaan galchaa. Filannoo yeroo irratti hundaa'e filadhaa.",
+    "mfaCodePrompt": "Itti aansuun koodii lakkoofsa 6 appiin agarsiisu galchaa.",
+    "mfaConfirm": "Banii",
+    "mfaRecoveryTitle": "Koodiiwwan deebi'ee argachuu olkaa'aa",
+    "mfaRecoveryWarning": "Bilbila yoo dhabdan koodiin tokkoon tokkoon isaanii al tokko hojjeta. Amma qofa mul'atu. Iddoo nageenyi isaa eegame, dhuunfaatti olkaa'aa.",
+    "mfaDone": "Olkaa'eera"
+  },
+  "role": {
+    "citizen": "Lammii",
+    "officer": "Ogeessa ilaalu",
+    "approver": "Murteessaa",
+    "agency_admin": "Bulchaa dhaabbataa",
+    "platform_admin": "Bulchaa sirnaa"
+  },
+  "error": {
+    "required": "Maaloo kutaalee hunda guutaa.",
+    "passwordMismatch": "Jechoonni icciitii wal hin simatan.",
+    "invalid_credentials": "Imeelii ykn jechi icciitii dogoggora, ykn akkaawuntiin yeroodhaaf cufameera.",
+    "invalid_otp": "Koodiin sun dogoggora.",
+    "email_taken": "Imeelii kanaan akkaawuntiin duraanuu jira.",
+    "weak_password": "Jechi icciitii dadhaboodha. Yoo xiqqaate arfii 10 barbaachisa.",
+    "invalid_request": "Odeeffannoon galchitan sirrii miti. Maaloo ilaalaa.",
+    "reauthentication_failed": "Jechi icciitii dogoggora.",
+    "mfa_already_enabled": "Mirkaneessi sadarkaa lama duraanuu banameera.",
+    "mfa_not_started": "Osoo hin mirkaneessin dura qophii jalqabaa.",
+    "rate_limited": "Yaalii baay'ee taasifameera. Xiqqoo turtanii irra deebi'aa yaalaa.",
+    "network": "Tajaajiluu qunnamuu hin dandeenye. Walqunnamtii keessan ilaalaa.",
+    "unknown": "Wanti tokko dogoggore. Maaloo irra deebi'aa yaalaa."
   }
 }

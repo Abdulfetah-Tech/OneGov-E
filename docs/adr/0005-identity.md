@@ -24,5 +24,6 @@ Open: partner onboarding, staff authentication policy, session lifetime.
 - Access tokens stay valid for up to 10 minutes after logout, a role change or an account being disabled.
 - A TOTP code can be reused within its time window (Identity does not track used codes).
 - A client that loses the response to a refresh and retries with the old token is signed out (the price of reuse detection).
-- Refresh tokens live in the browser. Whether to move them to an HttpOnly cookie is decided when the Angular login screens are built.
+- Browser storage (decided in the Angular sign-in slice): the access token is kept in memory only; the refresh token is kept in sessionStorage, so a reload keeps the session and closing the tab ends it. Script injected into the page could read it, so the app must load no third-party scripts and should get a strict Content-Security-Policy. Moving the refresh token to an HttpOnly cookie (with CSRF protection) is to be done before production.
+- The sign-in screen does not show a QR code for authenticator apps yet. The setup key is shown for typing by hand.
 - HS256 with a shared secret is fine for one API. Move to asymmetric keys if other services must validate tokens.
