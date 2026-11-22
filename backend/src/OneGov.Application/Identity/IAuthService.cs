@@ -15,6 +15,13 @@ public interface IAuthService
 
     Task<Result<UserProfileDto>> GetProfileAsync(Guid userId, CancellationToken cancellationToken);
 
+    NationalIdStatusDto GetNationalIdStatus();
+
+    Result<NationalIdStartDto> BeginNationalId();
+
+    Task<Result<TokenResponse>> CompleteNationalIdAsync(
+        NationalIdCompleteRequest request, CancellationToken cancellationToken);
+
     Task<Result<MfaEnrollmentDto>> BeginMfaEnrollmentAsync(
         Guid userId, BeginMfaRequest request, CancellationToken cancellationToken);
 
@@ -36,4 +43,7 @@ public static class AuthErrors
     public const string MfaAlreadyEnabled = "identity.mfa_already_enabled";
     public const string MfaNotStarted = "identity.mfa_not_started";
     public const string NotFound = "identity.not_found";
+    public const string InvalidState = "identity.invalid_state";
+    public const string NationalIdFailed = "identity.national_id_failed";
+    public const string NationalIdUnavailable = "identity.national_id_unavailable";
 }

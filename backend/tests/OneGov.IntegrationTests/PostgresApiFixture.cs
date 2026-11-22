@@ -31,6 +31,7 @@ public sealed class PostgresApiFixture : IAsyncLifetime
                 configuration.AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     ["ConnectionStrings:Default"] = _postgres.GetConnectionString(),
+                    ["NationalId:Provider"] = "mock",
                     ["Jwt:SigningKey"] = "test-only-signing-key-0123456789-abcdefghijklmnop",
                     // Tests share one client address, so the production limits would reject them.
                     ["RateLimiting:GlobalPermitLimit"] = "100000",

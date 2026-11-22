@@ -1,5 +1,7 @@
+using System.Security.Cryptography;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OneGov.Application.Audit;
@@ -26,8 +28,18 @@ public sealed class AuthService(
     IValidator<RefreshRequest> refreshValidator,
     IValidator<LogoutRequest> logoutValidator,
     IValidator<BeginMfaRequest> beginMfaValidator,
-    IValidator<ConfirmMfaRequest> confirmMfaValidator) : IAuthService
+    IValidator<ConfirmMfaRequest> confirmMfaValidator,
+    INationalIdProvider nationalId,
+    IDataProtectionProvider dataProtection,
+    IValidator<NationalIdCompleteRequest> nationalIdValidator) : IAuthService
 {
+    private const string NationalIdLoginProvider = "national-id";
+    private static readonly TimeSpan NationalIdStateLifetime = TimeSpan.FromMinutes(10);
+
+    // The state value sent to the provider is a sealed, expiring token, so the API needs no table to remember it.
+    private readonly ITimeLimitedDataProtector _stateProtector =
+        dataProtection.CreateProtector("OneGov.NationalId.State").ToTimeLimitedDataProtector();
+
     private const int RecoveryCodeCount = 10;
     private const string AuthenticatorIssuer = "OneGov";
 
@@ -115,6 +127,89 @@ public sealed class AuthService(
         await users.ResetAccessFailedCountAsync(user);
         var tokens = await IssueTokensAsync(user, otpVerified, cancellationToken);
         await AuditAsync(user, otpVerified ? "auth.login_mfa" : "auth.login", cancellationToken);
+        return Result<TokenResponse>.Success(tokens);
+    }
+
+    public NationalIdStatusDto GetNationalIdStatus() => new(nationalId.IsAvailable, nationalId.IsMock);
+
+    public Result<NationalIdStartDto> BeginNationalId()
+    {
+        if (!nationalId.IsAvailable)
+        {
+            return Result<NationalIdStartDto>.Failure(AuthErrors.NationalIdUnavailable, "National ID sign-in is not available.");
+        }
+
+        var nonce = Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(16));
+        var state = _stateProtector.Protect(nonce, NationalIdStateLifetime);
+        return Result<NationalIdStartDto>.Success(new NationalIdStartDto(nationalId.BuildAuthorizationUri(state).ToString(), state));
+    }
+
+    public async Task<Result<TokenResponse>> CompleteNationalIdAsync(
+        NationalIdCompleteRequest request, CancellationToken cancellationToken)
+    {
+        var validation = await nationalIdValidator.ValidateAsync(request, cancellationToken);
+        if (!validation.IsValid)
+        {
+            return Result<TokenResponse>.Failure(Invalid(validation));
+        }
+
+        if (!nationalId.IsAvailable)
+        {
+            return Result<TokenResponse>.Failure(AuthErrors.NationalIdUnavailable, "National ID sign-in is not available.");
+        }
+
+        try
+        {
+            _ = _stateProtector.Unprotect(request.State);
+        }
+        catch (Exception ex) when (ex is CryptographicException or FormatException)
+        {
+            return Result<TokenResponse>.Failure(AuthErrors.InvalidState, "The sign-in session expired or is not valid. Start again.");
+        }
+
+        var exchanged = await nationalId.ExchangeCodeAsync(request.Code, cancellationToken);
+        if (!exchanged.IsSuccess)
+        {
+            return Result<TokenResponse>.Failure(exchanged.Error!);
+        }
+
+        var identity = exchanged.Value!;
+        var user = await users.FindByLoginAsync(NationalIdLoginProvider, identity.Subject);
+        if (user is null)
+        {
+            // The provider's email is not trusted, so the account never merges with an existing one by email.
+            var placeholder = $"{Guid.NewGuid():N}@national-id.invalid";
+            user = new ApplicationUser
+            {
+                UserName = placeholder,
+                Email = placeholder,
+                DisplayName = identity.FullName.Length > 100 ? identity.FullName[..100] : identity.FullName,
+            };
+
+            var created = await users.CreateAsync(user);
+            if (!created.Succeeded)
+            {
+                return Result<TokenResponse>.Failure(MapIdentityErrors(created.Errors));
+            }
+
+            var linked = await users.AddLoginAsync(user, new UserLoginInfo(NationalIdLoginProvider, identity.Subject, "National ID"));
+            if (!linked.Succeeded)
+            {
+                // Two first sign-ins raced and the other one won. Remove this half-made account; trying again works.
+                await users.DeleteAsync(user);
+                return Result<TokenResponse>.Failure(AuthErrors.NationalIdFailed, "The national ID sign-in could not be completed.");
+            }
+
+            await users.AddToRoleAsync(user, Roles.Citizen);
+            await AuditAsync(user, "auth.register_national_id", cancellationToken);
+        }
+        else if (!user.IsActive || await users.IsLockedOutAsync(user))
+        {
+            return InvalidCredentials<TokenResponse>();
+        }
+
+        var tokens = await IssueTokensAsync(user, mfaVerified: false, cancellationToken);
+        await AuditAsync(user, "auth.login_national_id", cancellationToken);
         return Result<TokenResponse>.Success(tokens);
     }
 

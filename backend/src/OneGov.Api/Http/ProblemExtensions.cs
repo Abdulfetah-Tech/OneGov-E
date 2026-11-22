@@ -16,6 +16,8 @@ internal static class ProblemExtensions
             AuthErrors.EmailTaken or AuthErrors.MfaAlreadyEnabled => StatusCodes.Status409Conflict,
             AuthErrors.ReauthenticationFailed => StatusCodes.Status403Forbidden,
             AuthErrors.NotFound => StatusCodes.Status404NotFound,
+            AuthErrors.NationalIdFailed => StatusCodes.Status401Unauthorized,
+            AuthErrors.NationalIdUnavailable => StatusCodes.Status503ServiceUnavailable,
             _ => StatusCodes.Status400BadRequest,
         };
 

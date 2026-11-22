@@ -26,7 +26,8 @@ public sealed class JwtTokenIssuer(JwtOptions options, TimeProvider timeProvider
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
-            new("amr", "pwd"),
+            // Accounts created through the national ID have no password, so they can only have signed in that way.
+            new("amr", user.PasswordHash is null ? "eid" : "pwd"),
         };
 
         if (mfaVerified)

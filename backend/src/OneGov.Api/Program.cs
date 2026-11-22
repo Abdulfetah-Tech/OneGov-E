@@ -26,6 +26,7 @@ builder.Services.AddInfrastructure();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<OneGov.Application.Identity.IDataScopeAccessor, HttpDataScopeAccessor>();
 builder.Services.AddOneGovJwtAuthentication();
+builder.Services.AddNationalIdSignIn();
 builder.Services.AddPermissionAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -89,6 +90,7 @@ var app = builder.Build();
 
 // Fail fast on a missing or weak signing key instead of on the first sign-in.
 _ = app.Services.GetRequiredService<JwtOptions>();
+_ = app.Services.GetRequiredService<OneGov.Application.Identity.INationalIdProvider>();
 
 app.UseExceptionHandler();
 app.Use(async (context, next) =>

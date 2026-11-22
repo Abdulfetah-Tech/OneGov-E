@@ -38,6 +38,35 @@ public sealed class AuthController(IAuthService auth) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : this.ToProblem(result.Error!);
     }
 
+    /// <summary>Whether national ID sign-in is available, so the web app knows whether to offer it.</summary>
+    [HttpGet("national-id/status")]
+    [AllowAnonymous]
+    [ProducesResponseType<NationalIdStatusDto>(StatusCodes.Status200OK)]
+    public IActionResult NationalIdStatus() => Ok(auth.GetNationalIdStatus());
+
+    /// <summary>Returns where to send the browser and a sealed <c>state</c> the web app must hand back when it finishes.</summary>
+    [HttpPost("national-id/start")]
+    [AllowAnonymous]
+    [ProducesResponseType<NationalIdStartDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
+    public IActionResult StartNationalId()
+    {
+        var result = auth.BeginNationalId();
+        return result.IsSuccess ? Ok(result.Value) : this.ToProblem(result.Error!);
+    }
+
+    [HttpPost("national-id/complete")]
+    [AllowAnonymous]
+    [ProducesResponseType<TokenResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> CompleteNationalId(
+        [FromBody] NationalIdCompleteRequest request, CancellationToken cancellationToken)
+    {
+        var result = await auth.CompleteNationalIdAsync(request, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : this.ToProblem(result.Error!);
+    }
+
     [HttpPost("refresh")]
     [AllowAnonymous]
     [ProducesResponseType<TokenResponse>(StatusCodes.Status200OK)]
