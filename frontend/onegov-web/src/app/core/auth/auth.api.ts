@@ -6,6 +6,8 @@ import {
   LoginRequest,
   MfaConfirmed,
   MfaEnrollment,
+  NationalIdStart,
+  NationalIdStatus,
   RegisterRequest,
   TokenResponse,
   UserProfile,
@@ -38,6 +40,18 @@ export class AuthApi {
     return this.http.get<UserProfile>(`${API_BASE}/me`, {
       context: new HttpContext().set(SKIP_AUTH_RETRY, skipRetry),
     });
+  }
+
+  nationalIdStatus(): Observable<NationalIdStatus> {
+    return this.http.get<NationalIdStatus>(`${API_BASE}/auth/national-id/status`);
+  }
+
+  startNationalId(): Observable<NationalIdStart> {
+    return this.http.post<NationalIdStart>(`${API_BASE}/auth/national-id/start`, {});
+  }
+
+  completeNationalId(code: string, state: string): Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(`${API_BASE}/auth/national-id/complete`, { code, state });
   }
 
   beginMfa(password: string): Observable<MfaEnrollment> {

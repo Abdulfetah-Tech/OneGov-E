@@ -2,15 +2,18 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AuthApi } from './auth.api';
-import { RegisterRequest, TokenResponse, UserProfile } from './auth.models';
+import { NationalIdStatus, RegisterRequest, TokenResponse, UserProfile } from './auth.models';
 import { problemCode } from './auth.utils';
 
 const REFRESH_KEY = 'onegov.refresh';
+const NATIONAL_ID_STATE_KEY = 'onegov.nid.state';
 
 export type LoginOutcome =
   | { kind: 'signedIn' }
   | { kind: 'mfaRequired' }
   | { kind: 'error'; code: string };
+
+export type NationalIdBegin = { ok: true; url: string } | { ok: false; code: string };
 
 export type RegisterOutcome = { ok: true } | { ok: false; code: string };
 
@@ -77,6 +80,45 @@ export class AuthService {
     }
   }
 
+  async nationalIdStatus(): Promise<NationalIdStatus> {
+    try {
+      return await firstValueFrom(this.api.nationalIdStatus());
+    } catch {
+      return { available: false, isMock: false };
+    }
+  }
+
+  /** Asks the API where to send the browser and remembers the state, which must come back unchanged. */
+  async beginNationalId(): Promise<NationalIdBegin> {
+    try {
+      const start = await firstValueFrom(this.api.startNationalId());
+      try {
+        sessionStorage.setItem(NATIONAL_ID_STATE_KEY, start.state);
+      } catch {
+        return { ok: false, code: 'unknown' };
+      }
+      return { ok: true, url: start.authorizationUrl };
+    } catch (error) {
+      return { ok: false, code: problemCode(error) };
+    }
+  }
+
+  /** Finishes national ID sign-in after the provider sends the browser back. The returned state must be the one we sent. */
+  async completeNationalId(code: string, state: string): Promise<LoginOutcome> {
+    const expected = this.takeNationalIdState();
+    if (!expected || expected !== state) {
+      return { kind: 'error', code: 'identity.invalid_state' };
+    }
+    try {
+      this.accept(await firstValueFrom(this.api.completeNationalId(code, state)));
+      await this.loadProfile();
+      return { kind: 'signedIn' };
+    } catch (error) {
+      this.clear();
+      return { kind: 'error', code: problemCode(error) };
+    }
+  }
+
   async logout(): Promise<void> {
     const stored = this.storedRefresh();
     this.clear();
@@ -134,6 +176,16 @@ export class AuthService {
       sessionStorage.removeItem(REFRESH_KEY);
     } catch {
       // Ignore.
+    }
+  }
+
+  private takeNationalIdState(): string | null {
+    try {
+      const value = sessionStorage.getItem(NATIONAL_ID_STATE_KEY);
+      sessionStorage.removeItem(NATIONAL_ID_STATE_KEY);
+      return value;
+    } catch {
+      return null;
     }
   }
 

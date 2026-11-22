@@ -331,3 +331,8 @@ button:disabled {
   gap: 0.5rem;
   grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
 }
+
+.divider {
+  margin: 1rem 0 0.5rem;
+  color: var(--muted);
+}

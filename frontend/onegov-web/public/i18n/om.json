@@ -118,6 +118,20 @@
     "mfa_not_started": "Osoo hin mirkaneessin dura qophii jalqabaa.",
     "rate_limited": "Yaalii baay'ee taasifameera. Xiqqoo turtanii irra deebi'aa yaalaa.",
     "network": "Tajaajiluu qunnamuu hin dandeenye. Walqunnamtii keessan ilaalaa.",
-    "unknown": "Wanti tokko dogoggore. Maaloo irra deebi'aa yaalaa."
+    "unknown": "Wanti tokko dogoggore. Maaloo irra deebi'aa yaalaa.",
+    "invalid_state": "Yeroon seensaa darbeera ykn sirrii miti. Maaloo irra deebi'ii jalqabaa.",
+    "national_id_failed": "Seensi ID biyyaalessaa xumuramuu hin dandeenye.",
+    "national_id_unavailable": "Seensi ID biyyaalessaa amma hin argamu."
+  },
+  "nationalId": {
+    "button": "ID Biyyaalessaa Fayidaadhaan seeni",
+    "or": "ykn",
+    "working": "Seenaa jirta…",
+    "back": "Gara seensaatti deebi'i",
+    "mockBanner": "Fakkeenya misooma. Kun Fayidaa dhugaa miti. Asitti nama kamiyyuu akka nama kamiyyuu seenuu danda'a.",
+    "mockTitle": "ID Biyyaalessaa (fakkeenya)",
+    "idNumber": "Lakkoofsa ID (lakkoofsa kamiyyuu)",
+    "mockSubmit": "Itti fufi",
+    "emailNone": "Imeeliin hin kaa'amne (ID biyyaalessaatiin seenameera)"
   }
 }

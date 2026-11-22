@@ -118,6 +118,20 @@
     "mfa_not_started": "Start the setup before confirming a code.",
     "rate_limited": "Too many attempts. Please wait a moment and try again.",
     "network": "The server could not be reached. Check your connection.",
-    "unknown": "Something went wrong. Please try again."
+    "unknown": "Something went wrong. Please try again.",
+    "invalid_state": "The sign-in session expired or is not valid. Please start again.",
+    "national_id_failed": "The national ID sign-in could not be completed.",
+    "national_id_unavailable": "National ID sign-in is not available right now."
+  },
+  "nationalId": {
+    "button": "Sign in with Fayda national ID",
+    "or": "or",
+    "working": "Signing you in…",
+    "back": "Back to sign in",
+    "mockBanner": "Development mock. This is not the real Fayda. Anyone can sign in as anyone here.",
+    "mockTitle": "National ID (mock)",
+    "idNumber": "ID number (any digits)",
+    "mockSubmit": "Continue",
+    "emailNone": "No email set (signed in with national ID)"
   }
 }

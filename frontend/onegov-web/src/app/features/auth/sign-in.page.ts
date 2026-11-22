@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { NationalIdStatus } from '../../core/auth/auth.models';
 import { AuthService } from '../../core/auth/auth.service';
 import { errorKey, safeReturnUrl } from '../../core/auth/auth.utils';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -65,6 +66,13 @@ import { I18nService } from '../../core/i18n/i18n.service';
       <button type="submit" class="button" [disabled]="busy()">{{ i18n.t('auth.signIn.submit') }}</button>
     </form>
 
+    @if (nationalId().available) {
+      <p class="divider">{{ i18n.t('nationalId.or') }}</p>
+      <button type="button" class="button" [disabled]="busy()" (click)="startNationalId()">
+        {{ i18n.t('nationalId.button') }}
+      </button>
+    }
+
     <p>
       {{ i18n.t('auth.noAccount') }}
       <a routerLink="/register">{{ i18n.t('auth.register.title') }}</a>
@@ -85,6 +93,26 @@ export class SignInPage {
   protected readonly needsCode = signal(false);
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
+  protected readonly nationalId = signal<NationalIdStatus>({ available: false, isMock: false });
+
+  constructor() {
+    void this.auth.nationalIdStatus().then((status) => this.nationalId.set(status));
+  }
+
+  protected async startNationalId(): Promise<void> {
+    if (this.busy()) {
+      return;
+    }
+    this.busy.set(true);
+    this.error.set(null);
+    const started = await this.auth.beginNationalId();
+    if (started.ok) {
+      window.location.assign(started.url);
+      return;
+    }
+    this.busy.set(false);
+    this.error.set(this.i18n.t(errorKey(started.code)));
+  }
 
   protected async submit(event: Event): Promise<void> {
     event.preventDefault();

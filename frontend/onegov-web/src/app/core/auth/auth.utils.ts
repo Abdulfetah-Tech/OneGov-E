@@ -19,9 +19,23 @@ const KNOWN_CODES = new Set([
   'reauthentication_failed',
   'mfa_already_enabled',
   'mfa_not_started',
+  'invalid_state',
+  'national_id_failed',
+  'national_id_unavailable',
   'rate_limited',
   'network',
 ]);
+
+/**
+ * The "authorization code" the development mock provider returns: the identity, base64url-encoded. Must match
+ * MockNationalIdProvider on the API. Development only; the real provider returns an opaque code.
+ */
+export function mockNationalIdCode(idNumber: string, fullName: string): string {
+  const bytes = new TextEncoder().encode(JSON.stringify({ idNumber, fullName }));
+  let binary = '';
+  bytes.forEach((byte) => (binary += String.fromCharCode(byte)));
+  return 'mock.' + btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
 
 /** Reduces a failed HTTP call to a short code: the API's `identity.*` error type, or rate_limited, network or unknown. */
 export function problemCode(error: unknown): string {

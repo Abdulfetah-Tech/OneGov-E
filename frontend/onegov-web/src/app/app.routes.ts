@@ -27,6 +27,16 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/register.page').then((m) => m.RegisterPage),
       },
       {
+        path: 'auth/national-id/mock',
+        loadComponent: () =>
+          import('./features/auth/national-id-mock.page').then((m) => m.NationalIdMockPage),
+      },
+      {
+        path: 'auth/national-id/callback',
+        loadComponent: () =>
+          import('./features/auth/national-id-callback.page').then((m) => m.NationalIdCallbackPage),
+      },
+      {
         path: 'account',
         canActivate: [authGuard],
         loadComponent: () => import('./features/auth/account.page').then((m) => m.AccountPage),

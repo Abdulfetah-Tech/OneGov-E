@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { describe, expect, it } from 'vitest';
-import { errorKey, problemCode, safeReturnUrl } from './auth.utils';
+import { errorKey, mockNationalIdCode, problemCode, safeReturnUrl } from './auth.utils';
 
 describe('safeReturnUrl', () => {
   it('keeps same-site paths', () => {
@@ -33,11 +33,23 @@ describe('problemCode', () => {
   });
 });
 
+describe('mockNationalIdCode', () => {
+  it('encodes the identity the way the API mock provider expects', () => {
+    expect(mockNationalIdCode('1', 'A')).toBe('mock.eyJpZE51bWJlciI6IjEiLCJmdWxsTmFtZSI6IkEifQ');
+  });
+
+  it('handles non-Latin names as UTF-8', () => {
+    expect(mockNationalIdCode('1', 'አ')).toBe('mock.eyJpZE51bWJlciI6IjEiLCJmdWxsTmFtZSI6IuGKoCJ9');
+  });
+});
+
 describe('errorKey', () => {
   it('maps known codes to translation keys', () => {
     expect(errorKey('identity.invalid_credentials')).toBe('error.invalid_credentials');
     expect(errorKey('rate_limited')).toBe('error.rate_limited');
     expect(errorKey('network')).toBe('error.network');
+    expect(errorKey('identity.invalid_state')).toBe('error.invalid_state');
+    expect(errorKey('identity.national_id_failed')).toBe('error.national_id_failed');
   });
 
   it('uses the generic message for unknown codes', () => {

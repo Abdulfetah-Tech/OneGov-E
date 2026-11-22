@@ -30,6 +30,16 @@ export interface LoginRequest {
   otpCode: string | null;
 }
 
+export interface NationalIdStatus {
+  available: boolean;
+  isMock: boolean;
+}
+
+export interface NationalIdStart {
+  authorizationUrl: string;
+  state: string;
+}
+
 export interface MfaEnrollment {
   sharedKey: string;
   otpAuthUri: string;

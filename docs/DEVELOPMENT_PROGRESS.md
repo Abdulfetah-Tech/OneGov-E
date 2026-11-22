@@ -30,4 +30,10 @@ enrolment, agency data isolation.
 
 Angular sign-in slice (written, not yet run): sign-in with MFA code step, registration, account page with MFA setup and recovery codes,
 auth guard, token interceptor with single refresh-and-retry, translations (en, am, om; am and om are machine drafts).
-Still to do: Fayda mock sign-in, QR code for authenticator setup.
+Verified locally: 27 frontend tests; sign-in screens tried in the browser.
+
+National ID (Fayda) sign-in: backend verified (51 integration tests). Browser side written, not yet run: a "Sign in with Fayda"
+button on the sign-in page (shown only when the API reports it is available), a development-only mock identity page, and a callback
+page that checks the returned state matches the one it sent. To try it: run the API in Development (the mock is on there), then
+open http://localhost:4200/sign-in.
+Still to do: the real Fayda adapter (needs onboarding with the provider), QR code for authenticator setup.

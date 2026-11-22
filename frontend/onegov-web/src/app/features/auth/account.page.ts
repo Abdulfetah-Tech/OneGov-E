@@ -20,7 +20,7 @@ type MfaStep = 'idle' | 'password' | 'scan' | 'recovery';
         <h2 id="profile-heading">{{ user.displayName }}</h2>
         <dl class="details">
           <dt>{{ i18n.t('account.email') }}</dt>
-          <dd>{{ user.email }}</dd>
+          <dd>{{ hasRealEmail(user.email) ? user.email : i18n.t('nationalId.emailNone') }}</dd>
           <dt>{{ i18n.t('account.roles') }}</dt>
           <dd>
             @for (role of user.roles; track role) {
@@ -129,6 +129,11 @@ export class AccountPage {
   protected readonly groupedKey = computed(() =>
     (this.enrollment()?.sharedKey ?? '').replace(/(.{4})/g, '$1 ').trim(),
   );
+
+  /** National ID accounts start with a placeholder address that ends in .invalid. */
+  protected hasRealEmail(email: string): boolean {
+    return !email.endsWith('.invalid');
+  }
 
   protected roleLabel(role: string): string {
     const key = `role.${role}`;

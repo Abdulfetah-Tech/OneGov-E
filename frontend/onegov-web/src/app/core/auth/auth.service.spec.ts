@@ -35,6 +35,9 @@ describe('AuthService', () => {
     refresh: ReturnType<typeof vi.fn>;
     logout: ReturnType<typeof vi.fn>;
     me: ReturnType<typeof vi.fn>;
+    nationalIdStatus: ReturnType<typeof vi.fn>;
+    startNationalId: ReturnType<typeof vi.fn>;
+    completeNationalId: ReturnType<typeof vi.fn>;
   };
 
   function create(): AuthService {
@@ -51,6 +54,9 @@ describe('AuthService', () => {
       refresh: vi.fn(() => of({ ...TOKENS, accessToken: 'access-2', refreshToken: 'refresh-2' })),
       logout: vi.fn(() => of(undefined)),
       me: vi.fn(() => of(PROFILE)),
+      nationalIdStatus: vi.fn(() => of({ available: true, isMock: true })),
+      startNationalId: vi.fn(() => of({ authorizationUrl: 'http://localhost:4200/auth/national-id/mock?state=S1', state: 'S1' })),
+      completeNationalId: vi.fn(() => of(TOKENS)),
     };
   });
 
@@ -150,6 +156,64 @@ describe('AuthService', () => {
     expect(auth.token()).toBeNull();
     expect(sessionStorage.getItem('onegov.refresh')).toBeNull();
     expect(api.logout).toHaveBeenCalledWith('refresh-1');
+  });
+
+  it('reports whether national ID sign-in is available, and false when the API cannot be reached', async () => {
+    const auth = create();
+    expect(await auth.nationalIdStatus()).toEqual({ available: true, isMock: true });
+
+    api.nationalIdStatus.mockReturnValue(failure(0));
+    expect(await auth.nationalIdStatus()).toEqual({ available: false, isMock: false });
+  });
+
+  it('begins national ID sign-in by remembering the state and returning where to go', async () => {
+    const auth = create();
+
+    const started = await auth.beginNationalId();
+
+    expect(started).toEqual({ ok: true, url: 'http://localhost:4200/auth/national-id/mock?state=S1' });
+    expect(sessionStorage.getItem('onegov.nid.state')).toBe('S1');
+  });
+
+  it('finishes national ID sign-in when the returned state matches the one it sent', async () => {
+    const auth = create();
+    await auth.beginNationalId();
+
+    const outcome = await auth.completeNationalId('some-code', 'S1');
+
+    expect(outcome).toEqual({ kind: 'signedIn' });
+    expect(api.completeNationalId).toHaveBeenCalledWith('some-code', 'S1');
+    expect(auth.isSignedIn()).toBe(true);
+    expect(sessionStorage.getItem('onegov.nid.state')).toBeNull();
+  });
+
+  it('refuses a returned state it did not send, without calling the API', async () => {
+    const auth = create();
+    await auth.beginNationalId();
+
+    const outcome = await auth.completeNationalId('some-code', 'ATTACKER');
+
+    expect(outcome).toEqual({ kind: 'error', code: 'identity.invalid_state' });
+    expect(api.completeNationalId).not.toHaveBeenCalled();
+    expect(auth.isSignedIn()).toBe(false);
+  });
+
+  it('refuses to finish when no sign-in was started in this tab', async () => {
+    const auth = create();
+
+    const outcome = await auth.completeNationalId('some-code', 'S1');
+
+    expect(outcome).toEqual({ kind: 'error', code: 'identity.invalid_state' });
+  });
+
+  it('uses each state only once', async () => {
+    const auth = create();
+    await auth.beginNationalId();
+    await auth.completeNationalId('some-code', 'S1');
+
+    const again = await auth.completeNationalId('some-code', 'S1');
+
+    expect(again).toEqual({ kind: 'error', code: 'identity.invalid_state' });
   });
 
   it('answers permission questions from the profile', async () => {
