@@ -1,4 +1,5 @@
 using OneGov.Domain.Common;
+using OneGov.Domain.Identity;
 using OneGov.Domain.Workflow;
 
 namespace OneGov.Domain.Applications;
@@ -132,6 +133,49 @@ public sealed class ServiceApplication : AuditableEntity
         _history.Add(entry);
         State = transition.ToState;
         return Result<ApplicationHistoryEntry>.Success(entry);
+    }
+
+    /// <summary>
+    /// Applies a transition on behalf of a person. Checks the workflow's permission first, then the rules about who may act on
+    /// this particular application. Services must use this rather than <see cref="Apply"/>, which does not look at who the actor is.
+    /// </summary>
+    public Result<ApplicationHistoryEntry> ApplyAs(
+        WorkflowDefinition workflow, string transitionName, Actor actor, string? note, DateTimeOffset now)
+    {
+        ArgumentNullException.ThrowIfNull(actor);
+        var mismatch = EnsureWorkflowMatches(workflow);
+        if (mismatch is not null)
+        {
+            return Result<ApplicationHistoryEntry>.Failure(mismatch);
+        }
+
+        var evaluation = WorkflowEngine.Evaluate(workflow, State, transitionName, actor.Permissions, note);
+        if (!evaluation.IsSuccess)
+        {
+            return Result<ApplicationHistoryEntry>.Failure(evaluation.Error!);
+        }
+
+        var violation = ApplicationActorRules.Check(this, evaluation.Value, actor.UserId);
+        return violation is not null
+            ? Result<ApplicationHistoryEntry>.Failure(violation)
+            : Apply(workflow, transitionName, actor.UserId, actor.Permissions, note, now);
+    }
+
+    /// <summary>The transitions this person could apply right now, for showing the right buttons.</summary>
+    public IReadOnlyList<string> AvailableTransitions(WorkflowDefinition workflow, Actor actor)
+    {
+        ArgumentNullException.ThrowIfNull(actor);
+        if (EnsureWorkflowMatches(workflow) is not null)
+        {
+            return [];
+        }
+
+        return workflow.Transitions
+            .Where(t => t.FromStates.Contains(State)
+                && actor.Has(t.RequiredPermission)
+                && ApplicationActorRules.Check(this, t, actor.UserId) is null)
+            .Select(t => t.Name)
+            .ToList();
     }
 
     private Error? EnsureWorkflowMatches(WorkflowDefinition workflow)

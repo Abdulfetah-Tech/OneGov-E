@@ -29,6 +29,7 @@ public sealed class OneGovDbContext(
     {
         // Identity's own mapping first, then ours, so our table names win.
         base.OnModelCreating(modelBuilder);
+        modelBuilder.HasSequence<long>("application_reference_seq");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OneGovDbContext).Assembly);
 
         // Isolation in the data layer: a caller only ever sees their own applications and, for staff, their own agency's.

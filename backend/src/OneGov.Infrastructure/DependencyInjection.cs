@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using OneGov.Application.Applications;
 using OneGov.Application.Audit;
 using OneGov.Application.Identity;
 using OneGov.Application.Registry;
@@ -52,6 +53,7 @@ public static class DependencyInjection
 
         services.AddSingleton<JwtTokenIssuer>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<IServiceCatalog, ServiceCatalog>();
         services.AddScoped<IAuditLog, AuditLog>();
         return services;

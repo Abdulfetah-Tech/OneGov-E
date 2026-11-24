@@ -1,7 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using OneGov.Application.Applications;
 using OneGov.Application.Identity;
+using OneGov.Domain.Applications;
 using OneGov.Domain.Common;
+using OneGov.Domain.Identity;
+using OneGov.Domain.Workflow;
 
 namespace OneGov.Api.Http;
 
@@ -16,6 +20,12 @@ internal static class ProblemExtensions
             AuthErrors.EmailTaken or AuthErrors.MfaAlreadyEnabled => StatusCodes.Status409Conflict,
             AuthErrors.ReauthenticationFailed => StatusCodes.Status403Forbidden,
             AuthErrors.NotFound => StatusCodes.Status404NotFound,
+            ApplicationErrors.NotFound or ApplicationErrors.ServiceNotFound => StatusCodes.Status404NotFound,
+            ApplicationErrors.Forbidden or WorkflowErrors.Forbidden or ApplicationActorRules.NotApplicant
+                or ApplicationActorRules.ConflictOfInterest => StatusCodes.Status403Forbidden,
+            WorkflowErrors.InvalidState or ApplicationErrors.Conflict or ApplicationErrors.ServiceUnavailable
+                or "application.not_editable" => StatusCodes.Status409Conflict,
+            ApplicationErrors.WorkflowMissing or "application.workflow_mismatch" => StatusCodes.Status500InternalServerError,
             AuthErrors.NationalIdFailed => StatusCodes.Status401Unauthorized,
             AuthErrors.NationalIdUnavailable => StatusCodes.Status503ServiceUnavailable,
             _ => StatusCodes.Status400BadRequest,
@@ -23,6 +33,12 @@ internal static class ProblemExtensions
 
         return controller.Problem(detail: error.Message, statusCode: status, title: "Request could not be completed.", type: error.Code);
     }
+
+    /// <summary>Who is acting and what they may do, from the access token. Null when the token has no user id.</summary>
+    public static Actor? ToActor(this ClaimsPrincipal user) =>
+        user.GetUserId() is { } id
+            ? Actor.Create(id, user.FindAll("role").Select(claim => claim.Value), user.HasClaim("amr", "otp"))
+            : null;
 
     /// <summary>The signed-in user's id from the access token's <c>sub</c> claim.</summary>
     public static Guid? GetUserId(this ClaimsPrincipal user) =>

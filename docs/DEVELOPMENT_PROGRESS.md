@@ -36,4 +36,11 @@ National ID (Fayda) sign-in: backend verified (51 integration tests). Browser si
 button on the sign-in page (shown only when the API reports it is available), a development-only mock identity page, and a callback
 page that checks the returned state matches the one it sent. To try it: run the API in Development (the mock is on there), then
 open http://localhost:4200/sign-in.
+## Phase 4a: applications API (written, not yet compiled)
+`/api/v1/applications`: start a draft, save form data, submit, track, and staff transitions on the workflow engine. Reference numbers
+(for example OG-TAXFILING-2026-000123) come from a database sequence on first submit. Rules beyond role permissions: only the applicant can submit, provide
+documents or withdraw; staff cannot work on their own application; separate roles review and decide. Optimistic concurrency stops two
+officers acting at once. Every action is audited. Needs a new migration (the reference sequence): `dotnet ef migrations add ApplicationReferences ...`.
+Not built yet: notifications and outbox, document upload, form schemas per service, the browser screens.
+
 Still to do: the real Fayda adapter (needs onboarding with the provider), QR code for authenticator setup.

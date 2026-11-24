@@ -44,6 +44,12 @@ public static class RolePermissions
         return union;
     }
 
+    /// <summary>Permissions in force for a sign-in: staff-only permissions only count after a multi-factor sign-in.</summary>
+    public static IReadOnlySet<string> Effective(IEnumerable<string> roles, bool mfaVerified) =>
+        ForRoles(roles)
+            .Where(permission => mfaVerified || !Permissions.RequiresMfa(permission))
+            .ToHashSet(StringComparer.Ordinal);
+
     private static IReadOnlySet<string> Set(params string[] permissions) =>
         new HashSet<string>(permissions, StringComparer.Ordinal);
 }

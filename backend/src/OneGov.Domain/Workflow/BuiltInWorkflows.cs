@@ -53,6 +53,10 @@ public static class BuiltInWorkflows
 
     public static IReadOnlyList<WorkflowDefinition> All { get; } = [TaxFiling, IdRenewal];
 
+    /// <summary>The newest version of a workflow, which new applications start on.</summary>
+    public static WorkflowDefinition? Latest(string code) =>
+        All.Where(w => w.Code == code).OrderByDescending(w => w.Version).FirstOrDefault();
+
     public static WorkflowDefinition? Find(string code, int version) =>
         All.FirstOrDefault(w => w.Code == code && w.Version == version);
 }

@@ -23,9 +23,7 @@ public sealed record DataScope(bool IsUnrestricted, Guid CitizenId, Guid AgencyI
             return None;
         }
 
-        var permissions = RolePermissions.ForRoles(roles)
-            .Where(permission => mfaVerified || !Permissions.RequiresMfa(permission))
-            .ToHashSet(StringComparer.Ordinal);
+        var permissions = RolePermissions.Effective(roles, mfaVerified);
 
         var citizen = permissions.Contains(Permissions.ApplicationReadOwn) ? id : Guid.Empty;
         var agency = permissions.Contains(Permissions.ApplicationReadAgency) && agencyId is { } agencyGuid
