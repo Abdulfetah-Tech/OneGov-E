@@ -336,3 +336,37 @@ button:disabled {
   margin: 1rem 0 0.5rem;
   color: var(--muted);
 }
+
+textarea {
+  min-height: 6rem;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  border: 1px solid #8a96a5;
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.preserve {
+  white-space: pre-wrap;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.history {
+  padding-left: 1.25rem;
+
+  li {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}

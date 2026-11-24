@@ -37,7 +37,7 @@ export function mockNationalIdCode(idNumber: string, fullName: string): string {
   return 'mock.' + btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-/** Reduces a failed HTTP call to a short code: the API's `identity.*` error type, or rate_limited, network or unknown. */
+/** Reduces a failed HTTP call to a short code: the API's `identity.*`, `application.*` or `workflow.*` error type, or rate_limited, network or unknown. */
 export function problemCode(error: unknown): string {
   if (!(error instanceof HttpErrorResponse)) {
     return 'unknown';
@@ -49,11 +49,34 @@ export function problemCode(error: unknown): string {
     return 'rate_limited';
   }
   const type: unknown = error.error?.type;
-  return typeof type === 'string' && type.startsWith('identity.') ? type : 'unknown';
+  return typeof type === 'string' && /^(identity|application|workflow)\./.test(type) ? type : 'unknown';
 }
+
+const APPLICATION_CODES = new Set([
+  'not_found',
+  'forbidden',
+  'service_not_found',
+  'service_unavailable',
+  'invalid_request',
+  'invalid_payload',
+  'conflict',
+  'not_editable',
+  'not_applicant',
+  'conflict_of_interest',
+]);
+
+const WORKFLOW_CODES = new Set(['forbidden', 'invalid_state', 'unknown_transition', 'note_required']);
 
 /** Translation key for an error code. Anything not recognised falls back to the generic message. */
 export function errorKey(code: string): string {
+  if (code.startsWith('application.')) {
+    const name = code.slice('application.'.length);
+    return APPLICATION_CODES.has(name) ? `error.app_${name}` : 'error.unknown';
+  }
+  if (code.startsWith('workflow.')) {
+    const name = code.slice('workflow.'.length);
+    return WORKFLOW_CODES.has(name) ? `error.workflow_${name}` : 'error.unknown';
+  }
   const name = code.startsWith('identity.') ? code.slice('identity.'.length) : code;
   return KNOWN_CODES.has(name) ? `error.${name}` : 'error.unknown';
 }

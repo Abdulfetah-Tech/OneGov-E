@@ -41,6 +41,7 @@ open http://localhost:4200/sign-in.
 (for example OG-TAXFILING-2026-000123) come from a database sequence on first submit. Rules beyond role permissions: only the applicant can submit, provide
 documents or withdraw; staff cannot work on their own application; separate roles review and decide. Optimistic concurrency stops two
 officers acting at once. Every action is audited. Needs a new migration (the reference sequence): `dotnet ef migrations add ApplicationReferences ...`.
-Not built yet: notifications and outbox, document upload, form schemas per service, the browser screens.
+Browser screens for applications (written, not yet run): apply from a service page, My applications list with state filter and paging, application page with a temporary free-text form, submit/withdraw/provide documents, staff actions with notes, and the history. Dates show in the Ethiopian and Gregorian calendars.
+Not built yet: notifications and outbox, document upload, form schemas per service (the free-text form is a stand-in), a dedicated staff queue view.
 
 Still to do: the real Fayda adapter (needs onboarding with the provider), QR code for authenticator setup.

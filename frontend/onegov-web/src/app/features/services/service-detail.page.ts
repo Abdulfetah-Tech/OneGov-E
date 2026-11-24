@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
-import { catchError, map, of, startWith, switchMap } from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
+import { catchError, firstValueFrom, map, of, startWith, switchMap } from 'rxjs';
+import { ApplicationsApi } from '../../core/api/applications.api';
 import { ServiceDetail, ServicesApi } from '../../core/api/services.api';
+import { AuthService } from '../../core/auth/auth.service';
+import { errorKey, problemCode } from '../../core/auth/auth.utils';
 import { I18nService } from '../../core/i18n/i18n.service';
 
 type DetailState =
@@ -40,8 +43,24 @@ const KINDS = ['Eligibility', 'Document', 'Step'] as const;
 
         @if (current.service.status === 'Planned') {
           <p class="notice" role="note">{{ i18n.t('service.plannedNotice') }}</p>
-        } @else {
-          <p class="notice" role="note">{{ i18n.t('service.applyNotYet') }}</p>
+        } @else if (auth.hasPermission('application:submit')) {
+          <p>
+            <button type="button" class="button" [disabled]="applying()" (click)="apply(current.service.code)">
+              {{ i18n.t('applications.start') }}
+            </button>
+          </p>
+          @if (applyError(); as message) {
+            <p class="error" role="alert">{{ message }}</p>
+          }
+        } @else if (!auth.isSignedIn()) {
+          <p>
+            <a
+              class="button"
+              routerLink="/sign-in"
+              [queryParams]="{ returnUrl: '/services/' + current.service.code }"
+              >{{ i18n.t('applications.signInToApply') }}</a
+            >
+          </p>
         }
 
         @for (kind of kinds; track kind) {
@@ -60,6 +79,11 @@ const KINDS = ['Eligibility', 'Document', 'Step'] as const;
 })
 export class ServiceDetailPage {
   private readonly api = inject(ServicesApi);
+  private readonly applicationsApi = inject(ApplicationsApi);
+  private readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
+  protected readonly applying = signal(false);
+  protected readonly applyError = signal<string | null>(null);
   protected readonly i18n = inject(I18nService);
   protected readonly kinds = KINDS;
 
@@ -82,6 +106,22 @@ export class ServiceDetailPage {
     ),
     { initialValue: { status: 'loading' } as DetailState },
   );
+
+  protected async apply(code: string): Promise<void> {
+    if (this.applying()) {
+      return;
+    }
+    this.applying.set(true);
+    this.applyError.set(null);
+    try {
+      const draft = await firstValueFrom(this.applicationsApi.create(code));
+      await this.router.navigate(['/applications', draft.id]);
+    } catch (error) {
+      this.applyError.set(this.i18n.t(errorKey(problemCode(error))));
+    } finally {
+      this.applying.set(false);
+    }
+  }
 
   protected byKind(service: ServiceDetail, kind: string) {
     return service.requirements.filter((r) => r.kind === kind);

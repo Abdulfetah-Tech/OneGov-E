@@ -20,6 +20,9 @@ import { I18nService, LANG_LABELS, Lang, SUPPORTED_LANGS } from '../core/i18n/i1
           i18n.t('nav.home')
         }}</a>
         <a routerLink="/services" routerLinkActive="active">{{ i18n.t('nav.services') }}</a>
+        @if (auth.isSignedIn()) {
+          <a routerLink="/applications" routerLinkActive="active">{{ i18n.t('applications.nav') }}</a>
+        }
       </nav>
 
       <div class="account-links">

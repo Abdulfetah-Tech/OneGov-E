@@ -26,6 +26,15 @@ describe('problemCode', () => {
     expect(problemCode(new HttpErrorResponse({ status: 429 }))).toBe('rate_limited');
   });
 
+  it('reads application and workflow error types too', () => {
+    expect(problemCode(new HttpErrorResponse({ status: 409, error: { type: 'application.not_editable' } }))).toBe(
+      'application.not_editable',
+    );
+    expect(problemCode(new HttpErrorResponse({ status: 400, error: { type: 'workflow.note_required' } }))).toBe(
+      'workflow.note_required',
+    );
+  });
+
   it('is unknown for anything else', () => {
     expect(problemCode(new HttpErrorResponse({ status: 500, error: 'boom' }))).toBe('unknown');
     expect(problemCode(new HttpErrorResponse({ status: 400, error: { type: 'something-else' } }))).toBe('unknown');
@@ -50,10 +59,15 @@ describe('errorKey', () => {
     expect(errorKey('network')).toBe('error.network');
     expect(errorKey('identity.invalid_state')).toBe('error.invalid_state');
     expect(errorKey('identity.national_id_failed')).toBe('error.national_id_failed');
+    expect(errorKey('application.not_editable')).toBe('error.app_not_editable');
+    expect(errorKey('workflow.note_required')).toBe('error.workflow_note_required');
+    expect(errorKey('workflow.invalid_state')).toBe('error.workflow_invalid_state');
   });
 
   it('uses the generic message for unknown codes', () => {
     expect(errorKey('identity.something_new')).toBe('error.unknown');
     expect(errorKey('unknown')).toBe('error.unknown');
+    expect(errorKey('application.something_new')).toBe('error.unknown');
+    expect(errorKey('workflow.something_new')).toBe('error.unknown');
   });
 });

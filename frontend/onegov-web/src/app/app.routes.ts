@@ -37,6 +37,18 @@ export const routes: Routes = [
           import('./features/auth/national-id-callback.page').then((m) => m.NationalIdCallbackPage),
       },
       {
+        path: 'applications',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/applications/applications-list.page').then((m) => m.ApplicationsListPage),
+      },
+      {
+        path: 'applications/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/applications/application-detail.page').then((m) => m.ApplicationDetailPage),
+      },
+      {
         path: 'account',
         canActivate: [authGuard],
         loadComponent: () => import('./features/auth/account.page').then((m) => m.AccountPage),
