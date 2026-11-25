@@ -42,6 +42,13 @@ open http://localhost:4200/sign-in.
 documents or withdraw; staff cannot work on their own application; separate roles review and decide. Optimistic concurrency stops two
 officers acting at once. Every action is audited. Needs a new migration (the reference sequence): `dotnet ef migrations add ApplicationReferences ...`.
 Browser screens for applications (written, not yet run): apply from a service page, My applications list with state filter and paging, application page with a temporary free-text form, submit/withdraw/provide documents, staff actions with notes, and the history. Dates show in the Ethiopian and Gregorian calendars.
-Not built yet: notifications and outbox, document upload, form schemas per service (the free-text form is a stand-in), a dedicated staff queue view.
+## Phase 4b: in-app notifications (written, not yet compiled)
+`/api/v1/notifications` (list, unread count, mark read, mark all read). A notification is saved in the same database transaction as the
+workflow step it describes, so it can neither be lost nor describe something that did not happen. The applicant is notified when staff act
+and gets a confirmation when they submit. Stores facts (step, new state, note), so the web app shows the text in the reader's language.
+Needs a new migration (the notifications table): `dotnet ef migrations add Notifications ...`.
+Not built yet: email/SMS delivery through an outbox with retries, notifying staff of new submissions.
+
+Not built yet: document upload, form schemas per service (the free-text form is a stand-in), a dedicated staff queue view.
 
 Still to do: the real Fayda adapter (needs onboarding with the provider), QR code for authenticator setup.

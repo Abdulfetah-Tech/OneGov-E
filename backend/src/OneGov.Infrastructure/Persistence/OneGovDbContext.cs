@@ -5,6 +5,7 @@ using OneGov.Domain.Applications;
 using OneGov.Domain.Audit;
 using OneGov.Domain.Common;
 using OneGov.Domain.Identity;
+using OneGov.Domain.Notifications;
 using OneGov.Domain.Registry;
 using OneGov.Infrastructure.Identity;
 
@@ -24,6 +25,8 @@ public sealed class OneGovDbContext(
     public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

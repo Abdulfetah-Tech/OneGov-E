@@ -9,6 +9,7 @@ using OneGov.Application.Common;
 using OneGov.Domain.Applications;
 using OneGov.Domain.Common;
 using OneGov.Domain.Identity;
+using OneGov.Domain.Notifications;
 using OneGov.Domain.Registry;
 using OneGov.Domain.Workflow;
 using OneGov.Infrastructure.Persistence;
@@ -178,6 +179,13 @@ public sealed class ApplicationService(
                 .Where(s => s.Id == application.ServiceId).Select(s => s.Code).FirstAsync(cancellationToken);
             application.AssignReference(
                 ReferenceNumber.Format(serviceCode, now.UtcDateTime.Year, await NextReferenceAsync(cancellationToken)));
+        }
+
+        // Saved in the same transaction as the state change, so the applicant is told exactly when something really happened.
+        var notification = ApplicationNotifications.ForApplicant(application, applied.Value, now);
+        if (notification is not null)
+        {
+            db.Notifications.Add(notification);
         }
 
         if (!await TrySaveAsync(cancellationToken))

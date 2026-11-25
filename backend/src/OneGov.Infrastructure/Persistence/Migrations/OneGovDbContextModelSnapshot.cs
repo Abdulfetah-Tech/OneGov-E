@@ -417,6 +417,65 @@ namespace OneGov.Infrastructure.Persistence.Migrations
                     b.ToTable("refresh_tokens", (string)null);
                 });
 
+            modelBuilder.Entity("OneGov.Domain.Notifications.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("application_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("note");
+
+                    b.Property<DateTimeOffset?>("ReadAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("read_at");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)")
+                        .HasColumnName("reference_number");
+
+                    b.Property<string>("ToState")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("to_state");
+
+                    b.Property<string>("Transition")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("transition");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_notifications");
+
+                    b.HasIndex("ApplicationId")
+                        .HasDatabaseName("ix_notifications_application_id");
+
+                    b.HasIndex("UserId", "CreatedAt")
+                        .HasDatabaseName("ix_notifications_user_id_created_at");
+
+                    b.HasIndex("UserId", "ReadAt")
+                        .HasDatabaseName("ix_notifications_user_id_read_at");
+
+                    b.ToTable("notifications", (string)null);
+                });
+
             modelBuilder.Entity("OneGov.Domain.Registry.Agency", b =>
                 {
                     b.Property<Guid>("Id")
@@ -783,6 +842,16 @@ namespace OneGov.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_refresh_tokens_users_user_id");
+                });
+
+            modelBuilder.Entity("OneGov.Domain.Notifications.Notification", b =>
+                {
+                    b.HasOne("OneGov.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_notifications_users_user_id");
                 });
 
             modelBuilder.Entity("OneGov.Domain.Registry.Agency", b =>

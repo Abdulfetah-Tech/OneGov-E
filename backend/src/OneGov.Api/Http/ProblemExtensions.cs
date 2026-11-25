@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using OneGov.Application.Applications;
 using OneGov.Application.Identity;
+using OneGov.Application.Notifications;
 using OneGov.Domain.Applications;
 using OneGov.Domain.Common;
 using OneGov.Domain.Identity;
@@ -20,7 +21,7 @@ internal static class ProblemExtensions
             AuthErrors.EmailTaken or AuthErrors.MfaAlreadyEnabled => StatusCodes.Status409Conflict,
             AuthErrors.ReauthenticationFailed => StatusCodes.Status403Forbidden,
             AuthErrors.NotFound => StatusCodes.Status404NotFound,
-            ApplicationErrors.NotFound or ApplicationErrors.ServiceNotFound => StatusCodes.Status404NotFound,
+            ApplicationErrors.NotFound or ApplicationErrors.ServiceNotFound or NotificationErrors.NotFound => StatusCodes.Status404NotFound,
             ApplicationErrors.Forbidden or WorkflowErrors.Forbidden or ApplicationActorRules.NotApplicant
                 or ApplicationActorRules.ConflictOfInterest => StatusCodes.Status403Forbidden,
             WorkflowErrors.InvalidState or ApplicationErrors.Conflict or ApplicationErrors.ServiceUnavailable
