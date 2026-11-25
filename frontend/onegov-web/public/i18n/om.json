@@ -201,4 +201,16 @@
       "verify_identity": "Eenyummaa mirkaneessi"
     }
   }
+,
+  "notifications": {
+    "nav": "Beeksisa",
+    "title": "Beeksisoota",
+    "empty": "Beeksisni hin jiru.",
+    "markAll": "Hunda akka dubbifameetti mallatteessi",
+    "application": "Iyyannoo",
+    "open": "Iyyannoo bani",
+    "new": "Haaraa",
+    "unreadWord": "hin dubbifamne",
+    "loadError": "Beeksisoota fe'uun hin danda'amne."
+  }
 }

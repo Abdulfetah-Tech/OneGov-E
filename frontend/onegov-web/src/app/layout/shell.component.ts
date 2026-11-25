@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, untracked } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../core/auth/auth.service';
 import { I18nService, LANG_LABELS, Lang, SUPPORTED_LANGS } from '../core/i18n/i18n.service';
+import { NotificationsService } from '../core/notifications/notifications.service';
 
 @Component({
   selector: 'app-shell',
@@ -27,6 +28,12 @@ import { I18nService, LANG_LABELS, Lang, SUPPORTED_LANGS } from '../core/i18n/i1
 
       <div class="account-links">
         @if (auth.user(); as user) {
+          <a routerLink="/notifications" routerLinkActive="active" [attr.aria-label]="bellLabel()">
+            {{ i18n.t('notifications.nav') }}
+            @if (notifications.unread() > 0) {
+              <span class="count">{{ notifications.unread() }}</span>
+            }
+          </a>
           <a routerLink="/account" routerLinkActive="active">{{ user.displayName }}</a>
           <button type="button" class="link-button" (click)="signOut()">{{ i18n.t('auth.signOut') }}</button>
         } @else {
@@ -59,9 +66,30 @@ import { I18nService, LANG_LABELS, Lang, SUPPORTED_LANGS } from '../core/i18n/i1
 export class ShellComponent {
   protected readonly i18n = inject(I18nService);
   protected readonly auth = inject(AuthService);
+  protected readonly notifications = inject(NotificationsService);
   private readonly router = inject(Router);
   protected readonly langs = SUPPORTED_LANGS;
   protected readonly labels = LANG_LABELS;
+
+  constructor() {
+    // While someone is signed in, keep the bell's unread count fresh.
+    effect((onCleanup) => {
+      if (!this.auth.isSignedIn()) {
+        untracked(() => this.notifications.reset());
+        return;
+      }
+      untracked(() => void this.notifications.refresh());
+      const timer = setInterval(() => void this.notifications.refresh(), 60_000);
+      onCleanup(() => clearInterval(timer));
+    });
+  }
+
+  protected bellLabel(): string {
+    const count = this.notifications.unread();
+    return count > 0
+      ? `${this.i18n.t('notifications.nav')} (${count} ${this.i18n.t('notifications.unreadWord')})`
+      : this.i18n.t('notifications.nav');
+  }
 
   protected choose(lang: Lang): void {
     void this.i18n.use(lang);

@@ -201,4 +201,16 @@
       "verify_identity": "Verify identity"
     }
   }
+,
+  "notifications": {
+    "nav": "Notifications",
+    "title": "Notifications",
+    "empty": "You have no notifications.",
+    "markAll": "Mark all as read",
+    "application": "Application",
+    "open": "Open application",
+    "new": "New",
+    "unreadWord": "unread",
+    "loadError": "The notifications could not be loaded."
+  }
 }

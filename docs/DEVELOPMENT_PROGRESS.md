@@ -47,6 +47,7 @@ Browser screens for applications (written, not yet run): apply from a service pa
 workflow step it describes, so it can neither be lost nor describe something that did not happen. The applicant is notified when staff act
 and gets a confirmation when they submit. Stores facts (step, new state, note), so the web app shows the text in the reader's language.
 Needs a new migration (the notifications table): `dotnet ef migrations add Notifications ...`.
+Backend verified (94 domain and 70 integration tests). Browser side written, not yet run: a Notifications link with an unread count in the header (refreshed every minute while signed in), and a Notifications page where each item opens its application and is marked read.
 Not built yet: email/SMS delivery through an outbox with retries, notifying staff of new submissions.
 
 Not built yet: document upload, form schemas per service (the free-text form is a stand-in), a dedicated staff queue view.
