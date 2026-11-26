@@ -18,7 +18,11 @@ public sealed class PostgresApiFixture : IAsyncLifetime
         .WithPassword("local-test-only")
         .Build();
 
+    private readonly string _documentsRoot = Path.Combine(Path.GetTempPath(), "onegov-test-documents-" + Guid.NewGuid().ToString("N"));
+
     public WebApplicationFactory<Program> Factory { get; private set; } = null!;
+
+    public string DocumentsRoot => _documentsRoot;
 
     public async Task InitializeAsync()
     {
@@ -32,6 +36,7 @@ public sealed class PostgresApiFixture : IAsyncLifetime
                 {
                     ["ConnectionStrings:Default"] = _postgres.GetConnectionString(),
                     ["NationalId:Provider"] = "mock",
+                    ["Documents:RootPath"] = _documentsRoot,
                     ["Jwt:SigningKey"] = "test-only-signing-key-0123456789-abcdefghijklmnop",
                     // Tests share one client address, so the production limits would reject them.
                     ["RateLimiting:GlobalPermitLimit"] = "100000",
@@ -48,6 +53,10 @@ public sealed class PostgresApiFixture : IAsyncLifetime
     {
         await Factory.DisposeAsync();
         await _postgres.DisposeAsync();
+        if (Directory.Exists(_documentsRoot))
+        {
+            Directory.Delete(_documentsRoot, recursive: true);
+        }
     }
 }
 

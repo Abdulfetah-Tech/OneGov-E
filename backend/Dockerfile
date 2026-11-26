@@ -17,7 +17,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 ENV ASPNETCORE_HTTP_PORTS=8080 \
     DOTNET_EnableDiagnostics=0
-RUN mkdir -p /home/app/.aspnet/DataProtection-Keys && chown -R app:app /home/app/.aspnet
+RUN mkdir -p /home/app/.aspnet/DataProtection-Keys /data/documents && chown -R app:app /home/app/.aspnet /data
 COPY --from=build /app/publish .
 USER app
 EXPOSE 8080

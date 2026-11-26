@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  OneGov.Domain -> C:\Users\HP\OneDrive\Desktop\onegov\backend\src\OneGov.Domain\bin\Debug\net10.0\OneGov.Domain.dll
+  OneGov.Application -> C:\Users\HP\OneDrive\Desktop\onegov\backend\src\OneGov.Application\bin\Debug\net10.0\OneGov.Application.dll
+  OneGov.Infrastructure -> C:\Users\HP\OneDrive\Desktop\onegov\backend\src\OneGov.Infrastructure\bin\Debug\net10.0\OneGov.Infrastructure.dll
+  OneGov.Api -> C:\Users\HP\OneDrive\Desktop\onegov\backend\src\OneGov.Api\bin\Debug\net10.0\OneGov.Api.dll
+  OneGov.IntegrationTests -> C:\Users\HP\OneDrive\Desktop\onegov\backend\tests\OneGov.IntegrationTests\bin\Debug\net10.0\OneGov.IntegrationTests.dll
+Test run for C:\Users\HP\OneDrive\Desktop\onegov\backend\tests\OneGov.IntegrationTests\bin\Debug\net10.0\OneGov.IntegrationTests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    83, Skipped:     0, Total:    83, Duration: 19 s - OneGov.IntegrationTests.dll (net10.0)

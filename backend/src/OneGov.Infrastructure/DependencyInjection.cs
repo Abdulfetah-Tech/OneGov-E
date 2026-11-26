@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OneGov.Application.Applications;
+using OneGov.Application.Documents;
 using OneGov.Application.Audit;
 using OneGov.Application.Identity;
 using OneGov.Application.Notifications;
@@ -56,6 +57,15 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IDocumentService, DocumentService>();
+
+        // Uploaded files live below Documents:RootPath (default data/documents next to the app). Resolved lazily so overrides apply.
+        services.AddSingleton<IDocumentStore>(provider =>
+        {
+            var configured = provider.GetRequiredService<IConfiguration>()["Documents:RootPath"] ?? "data/documents";
+            var contentRoot = provider.GetRequiredService<Microsoft.Extensions.Hosting.IHostEnvironment>().ContentRootPath;
+            return new FileSystemDocumentStore(Path.GetFullPath(configured, contentRoot));
+        });
         services.AddScoped<IServiceCatalog, ServiceCatalog>();
         services.AddScoped<IAuditLog, AuditLog>();
         return services;

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using OneGov.Application.Applications;
+using OneGov.Application.Documents;
 using OneGov.Application.Identity;
 using OneGov.Application.Notifications;
 using OneGov.Domain.Applications;
@@ -21,10 +22,14 @@ internal static class ProblemExtensions
             AuthErrors.EmailTaken or AuthErrors.MfaAlreadyEnabled => StatusCodes.Status409Conflict,
             AuthErrors.ReauthenticationFailed => StatusCodes.Status403Forbidden,
             AuthErrors.NotFound => StatusCodes.Status404NotFound,
-            ApplicationErrors.NotFound or ApplicationErrors.ServiceNotFound or NotificationErrors.NotFound => StatusCodes.Status404NotFound,
+            ApplicationErrors.NotFound or ApplicationErrors.ServiceNotFound or NotificationErrors.NotFound
+                or DocumentErrors.NotFound => StatusCodes.Status404NotFound,
+            DocumentErrors.TooLarge => StatusCodes.Status413PayloadTooLarge,
+            DocumentErrors.StorageFailed => StatusCodes.Status503ServiceUnavailable,
             ApplicationErrors.Forbidden or WorkflowErrors.Forbidden or ApplicationActorRules.NotApplicant
                 or ApplicationActorRules.ConflictOfInterest => StatusCodes.Status403Forbidden,
             WorkflowErrors.InvalidState or ApplicationErrors.Conflict or ApplicationErrors.ServiceUnavailable
+                or DocumentErrors.LimitReached
                 or "application.not_editable" => StatusCodes.Status409Conflict,
             ApplicationErrors.WorkflowMissing or "application.workflow_mismatch" => StatusCodes.Status500InternalServerError,
             AuthErrors.NationalIdFailed => StatusCodes.Status401Unauthorized,

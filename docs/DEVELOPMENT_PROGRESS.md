@@ -48,6 +48,16 @@ workflow step it describes, so it can neither be lost nor describe something tha
 and gets a confirmation when they submit. Stores facts (step, new state, note), so the web app shows the text in the reader's language.
 Needs a new migration (the notifications table): `dotnet ef migrations add Notifications ...`.
 Backend verified (94 domain and 70 integration tests). Browser side written, not yet run: a Notifications link with an unread count in the header (refreshed every minute while signed in), and a Notifications page where each item opens its application and is marked read.
+## Phase 4c: document upload (written, not yet compiled)
+`/api/v1/applications/{id}/documents`: upload (multipart field `file`), list, download, delete. PDF, PNG and JPEG only, recognised by their
+first bytes rather than the name or the type the browser claims; at most 5 MB each and 10 per application; names are sanitised
+and files are stored under random keys, so nothing a user types becomes part of a disk path. Only the applicant can add or remove
+files, and only while the application is open for changes (draft, or after staff ask for documents). Anyone who can see the application
+can list and download; every download is audited. Files are always sent as downloads with nosniff. Needs a migration
+(`application_documents`): `dotnet ef migrations add ApplicationDocuments ...`. Docker stores files in the `documents` volume.
+Known gaps: no malware scanning yet (documents are marked not_scanned; connect a scanner such as ClamAV before real use), no
+encryption of files beyond disk or volume encryption, files in a local folder rather than object storage.
+
 Not built yet: email/SMS delivery through an outbox with retries, notifying staff of new submissions.
 
 Not built yet: document upload, form schemas per service (the free-text form is a stand-in), a dedicated staff queue view.

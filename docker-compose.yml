@@ -29,6 +29,7 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
       ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-onegov};Username=${POSTGRES_USER:-onegov};Password=${POSTGRES_PASSWORD}"
+      Documents__RootPath: /data/documents
       Jwt__SigningKey: ${JWT_SIGNING_KEY:-}
       NationalId__Provider: ${NATIONAL_ID_PROVIDER:-none}
       NationalId__RedirectUri: ${WEB_PUBLIC_URL:-http://localhost:8080}/auth/national-id/callback
@@ -37,6 +38,7 @@ services:
       Database__SeedDevelopmentData: "true"
     volumes:
       - api_keys:/home/app/.aspnet
+      - documents:/data/documents
     ports:
       - "127.0.0.1:${API_PORT:-5080}:8080"
     healthcheck:
@@ -59,3 +61,4 @@ services:
 volumes:
   postgres_data:
   api_keys:
+  documents:
