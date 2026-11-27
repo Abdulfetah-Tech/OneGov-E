@@ -48,8 +48,11 @@ export function problemCode(error: unknown): string {
   if (error.status === 429) {
     return 'rate_limited';
   }
+  if (error.status === 413) {
+    return 'document.too_large';
+  }
   const type: unknown = error.error?.type;
-  return typeof type === 'string' && /^(identity|application|workflow)\./.test(type) ? type : 'unknown';
+  return typeof type === 'string' && /^(identity|application|workflow|document)\./.test(type) ? type : 'unknown';
 }
 
 const APPLICATION_CODES = new Set([
@@ -65,6 +68,8 @@ const APPLICATION_CODES = new Set([
   'conflict_of_interest',
 ]);
 
+const DOCUMENT_CODES = new Set(['invalid_file', 'too_large', 'limit_reached', 'not_found', 'storage_failed']);
+
 const WORKFLOW_CODES = new Set(['forbidden', 'invalid_state', 'unknown_transition', 'note_required']);
 
 /** Translation key for an error code. Anything not recognised falls back to the generic message. */
@@ -72,6 +77,10 @@ export function errorKey(code: string): string {
   if (code.startsWith('application.')) {
     const name = code.slice('application.'.length);
     return APPLICATION_CODES.has(name) ? `error.app_${name}` : 'error.unknown';
+  }
+  if (code.startsWith('document.')) {
+    const name = code.slice('document.'.length);
+    return DOCUMENT_CODES.has(name) ? `error.doc_${name}` : 'error.unknown';
   }
   if (code.startsWith('workflow.')) {
     const name = code.slice('workflow.'.length);

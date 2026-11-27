@@ -135,7 +135,12 @@
     "workflow_forbidden": "You are not allowed to take this step.",
     "workflow_invalid_state": "That step is not possible in the application's current state.",
     "workflow_unknown_transition": "That step does not exist.",
-    "workflow_note_required": "This step needs a note."
+    "workflow_note_required": "This step needs a note.",
+    "doc_invalid_file": "Only PDF, PNG and JPEG files can be uploaded.",
+    "doc_too_large": "The file is too large. The limit is 5 MB.",
+    "doc_limit_reached": "An application can have at most 10 documents.",
+    "doc_not_found": "The document was not found.",
+    "doc_storage_failed": "The file could not be stored. Please try again."
   },
   "nationalId": {
     "button": "Sign in with Fayda national ID",
@@ -212,5 +217,16 @@
     "new": "New",
     "unreadWord": "unread",
     "loadError": "The notifications could not be loaded."
+  }
+,
+  "documents": {
+    "title": "Supporting documents",
+    "empty": "No documents have been added yet.",
+    "add": "Add a document",
+    "hint": "PDF, PNG or JPEG, up to 5 MB each and up to 10 files.",
+    "download": "Download",
+    "remove": "Remove",
+    "added": "Document added.",
+    "removed": "Document removed."
   }
 }

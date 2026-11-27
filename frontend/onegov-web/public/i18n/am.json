@@ -135,7 +135,12 @@
     "workflow_forbidden": "ይህን እርምጃ ለመውሰድ ፈቃድ የለዎትም።",
     "workflow_invalid_state": "ማመልከቻው አሁን ባለበት ሁኔታ ይህ እርምጃ አይቻልም።",
     "workflow_unknown_transition": "ይህ እርምጃ አይታወቅም።",
-    "workflow_note_required": "ለዚህ እርምጃ ማስታወሻ ያስፈልጋል።"
+    "workflow_note_required": "ለዚህ እርምጃ ማስታወሻ ያስፈልጋል።",
+    "doc_invalid_file": "PDF፣ PNG እና JPEG ፋይሎች ብቻ መጫን ይቻላል።",
+    "doc_too_large": "ፋይሉ በጣም ትልቅ ነው። ገደቡ 5 ሜባ ነው።",
+    "doc_limit_reached": "አንድ ማመልከቻ ቢበዛ 10 ሰነዶች ሊኖሩት ይችላል።",
+    "doc_not_found": "ሰነዱ አልተገኘም።",
+    "doc_storage_failed": "ፋይሉን ማስቀመጥ አልተቻለም። እባክዎ እንደገና ይሞክሩ።"
   },
   "nationalId": {
     "button": "በፋይዳ ብሔራዊ መታወቂያ ግባ",
@@ -212,5 +217,16 @@
     "new": "አዲስ",
     "unreadWord": "ያልተነበቡ",
     "loadError": "ማሳወቂያዎቹን መጫን አልተቻለም።"
+  }
+,
+  "documents": {
+    "title": "ደጋፊ ሰነዶች",
+    "empty": "እስካሁን ምንም ሰነድ አልተጨመረም።",
+    "add": "ሰነድ ጨምር",
+    "hint": "PDF፣ PNG ወይም JPEG፣ እያንዳንዳቸው እስከ 5 ሜባ እና እስከ 10 ፋይሎች።",
+    "download": "አውርድ",
+    "remove": "አስወግድ",
+    "added": "ሰነዱ ተጨምሯል።",
+    "removed": "ሰነዱ ተወግዷል።"
   }
 }

@@ -135,7 +135,12 @@
     "workflow_forbidden": "Tarkaanfii kana fudhachuuf hayyama hin qabdu.",
     "workflow_invalid_state": "Haala amma jirutti tarkaanfiin kun hin danda'amu.",
     "workflow_unknown_transition": "Tarkaanfiin kun hin beekamu.",
-    "workflow_note_required": "Tarkaanfii kanaaf yaadannoon barbaachisa."
+    "workflow_note_required": "Tarkaanfii kanaaf yaadannoon barbaachisa.",
+    "doc_invalid_file": "Faayiliin PDF, PNG fi JPEG qofa ol fe'amuu danda'u.",
+    "doc_too_large": "Faayiliin kun baay'ee guddaa dha. Daangaan 5 MB dha.",
+    "doc_limit_reached": "Iyyannoon tokko hanga sanada 10 qabaachuu danda'a.",
+    "doc_not_found": "Sanadni hin argamne.",
+    "doc_storage_failed": "Faayilicha olkaa'uun hin danda'amne. Maaloo irra deebi'aa yaalaa."
   },
   "nationalId": {
     "button": "ID Biyyaalessaa Fayidaadhaan seeni",
@@ -212,5 +217,16 @@
     "new": "Haaraa",
     "unreadWord": "hin dubbifamne",
     "loadError": "Beeksisoota fe'uun hin danda'amne."
+  }
+,
+  "documents": {
+    "title": "Sanadoota deeggaru",
+    "empty": "Ammaaf sanadni hin dabalamne.",
+    "add": "Sanada dabali",
+    "hint": "PDF, PNG ykn JPEG, tokkoon tokkoon isaanii hanga 5 MB fi faayilii hanga 10.",
+    "download": "Buusi",
+    "remove": "Haqi",
+    "added": "Sanadni dabalameera.",
+    "removed": "Sanadni haqameera."
   }
 }

@@ -35,6 +35,13 @@ describe('problemCode', () => {
     );
   });
 
+  it('reads document error types, and treats a 413 from the web server as too large', () => {
+    expect(problemCode(new HttpErrorResponse({ status: 400, error: { type: 'document.invalid_file' } }))).toBe(
+      'document.invalid_file',
+    );
+    expect(problemCode(new HttpErrorResponse({ status: 413 }))).toBe('document.too_large');
+  });
+
   it('is unknown for anything else', () => {
     expect(problemCode(new HttpErrorResponse({ status: 500, error: 'boom' }))).toBe('unknown');
     expect(problemCode(new HttpErrorResponse({ status: 400, error: { type: 'something-else' } }))).toBe('unknown');
@@ -62,6 +69,8 @@ describe('errorKey', () => {
     expect(errorKey('application.not_editable')).toBe('error.app_not_editable');
     expect(errorKey('workflow.note_required')).toBe('error.workflow_note_required');
     expect(errorKey('workflow.invalid_state')).toBe('error.workflow_invalid_state');
+    expect(errorKey('document.invalid_file')).toBe('error.doc_invalid_file');
+    expect(errorKey('document.too_large')).toBe('error.doc_too_large');
   });
 
   it('uses the generic message for unknown codes', () => {

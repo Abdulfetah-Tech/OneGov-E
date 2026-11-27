@@ -55,6 +55,7 @@ and files are stored under random keys, so nothing a user types becomes part of 
 files, and only while the application is open for changes (draft, or after staff ask for documents). Anyone who can see the application
 can list and download; every download is audited. Files are always sent as downloads with nosniff. Needs a migration
 (`application_documents`): `dotnet ef migrations add ApplicationDocuments ...`. Docker stores files in the `documents` volume.
+Browser side (written, not yet run): a Supporting documents section on the application page. The applicant can add files (checked in the browser first, then by the server), download and remove them while the application is open for changes; staff can list and download. Downloads are fetched with the sign-in token and saved by the browser.
 Known gaps: no malware scanning yet (documents are marked not_scanned; connect a scanner such as ClamAV before real use), no
 encryption of files beyond disk or volume encryption, files in a local folder rather than object storage.
 
