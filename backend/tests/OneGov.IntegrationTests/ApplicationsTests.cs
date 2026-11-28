@@ -24,8 +24,16 @@ public sealed class ApplicationsTests(PostgresApiFixture fixture)
         return (await Json(response)).GetProperty("id").GetGuid();
     }
 
-    private static Task<HttpResponseMessage> TransitionAsync(TestSession who, Guid id, string transition, string? note = null) =>
-        who.Client.PostAsJsonAsync($"{Applications}/{id}/transitions", new { transition, note });
+    private static async Task<HttpResponseMessage> TransitionAsync(TestSession who, Guid id, string transition, string? note = null)
+    {
+        // Submitting needs a complete form, so these tests fill in a valid one first.
+        if (transition == "submit")
+        {
+            await TestForms.SaveValidTaxPayloadAsync(who, id);
+        }
+
+        return await who.Client.PostAsJsonAsync($"{Applications}/{id}/transitions", new { transition, note });
+    }
 
     private static async Task<JsonElement> OkAsync(HttpResponseMessage response)
     {
@@ -82,14 +90,14 @@ public sealed class ApplicationsTests(PostgresApiFixture fixture)
         var citizen = await TestUsers.CitizenAsync(fixture);
         var id = await CreateDraftAsync(citizen);
 
-        var saved = await OkAsync(await citizen.Client.PutAsJsonAsync($"{Applications}/{id}/payload", new { payload = new { income = 1200, year = 2026 } }));
+        var saved = await OkAsync(await citizen.Client.PutAsJsonAsync($"{Applications}/{id}/payload", new { payload = new { employmentIncome = 1200, taxYear = "2018" } }));
         var notObject = await citizen.Client.PutAsJsonAsync($"{Applications}/{id}/payload", new { payload = new[] { 1, 2 } });
         var fetched = await OkAsync(await citizen.Client.GetAsync($"{Applications}/{id}"));
 
-        Assert.Equal(1200, saved.GetProperty("payload").GetProperty("income").GetInt32());
+        Assert.Equal(1200, saved.GetProperty("payload").GetProperty("employmentIncome").GetInt32());
         Assert.Equal(HttpStatusCode.BadRequest, notObject.StatusCode);
         Assert.Equal("application.invalid_payload", await ProblemType(notObject));
-        Assert.Equal(2026, fetched.GetProperty("payload").GetProperty("year").GetInt32());
+        Assert.Equal("2018", fetched.GetProperty("payload").GetProperty("taxYear").GetString());
     }
 
     [Fact]

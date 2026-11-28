@@ -34,6 +34,29 @@ public sealed record ApplicationSummaryDto(
 public sealed record HistoryEntryDto(
     string Transition, string FromState, string ToState, Guid ActorId, string? Note, DateTimeOffset OccurredAt);
 
+/// <summary>Text in the three languages, with Amharic and Afaan Oromo already falling back to English when not translated.</summary>
+public sealed record LocalizedTextDto(string En, string Am, string Om);
+
+public sealed record FormOptionDto(string Value, LocalizedTextDto Label);
+
+public sealed record FormConditionDto(string FieldKey, string EqualsValue);
+
+public sealed record FormFieldDto(
+    string Key,
+    string Type,
+    LocalizedTextDto Label,
+    LocalizedTextDto? Hint,
+    bool Required,
+    int MaxLength,
+    string? Pattern,
+    decimal? Min,
+    decimal? Max,
+    bool MustBeInPast,
+    IReadOnlyList<FormOptionDto>? Options,
+    FormConditionDto? RequiredWhen);
+
+public sealed record FormDto(string ServiceCode, int Version, IReadOnlyList<FormFieldDto> Fields);
+
 public sealed record ApplicationDetailDto(
     Guid Id,
     string? ReferenceNumber,
@@ -44,7 +67,8 @@ public sealed record ApplicationDetailDto(
     JsonElement Payload,
     bool IsEditable,
     IReadOnlyList<string> AvailableTransitions,
-    IReadOnlyList<HistoryEntryDto> History);
+    IReadOnlyList<HistoryEntryDto> History,
+    FormDto? Form);
 
 public sealed class CreateApplicationRequestValidator : AbstractValidator<CreateApplicationRequest>
 {

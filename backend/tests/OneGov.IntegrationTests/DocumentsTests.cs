@@ -46,6 +46,11 @@ public sealed class DocumentsTests(PostgresApiFixture fixture)
 
     private static async Task ActAsync(TestSession who, Guid id, string transition, string? note = null)
     {
+        if (transition == "submit")
+        {
+            await TestForms.SaveValidTaxPayloadAsync(who, id);
+        }
+
         var response = await who.Client.PostAsJsonAsync($"/api/v1/applications/{id}/transitions", new { transition, note });
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }

@@ -65,7 +65,11 @@ public sealed class ServiceApplication : AuditableEntity
 
     public IReadOnlyList<ApplicationHistoryEntry> History => _history;
 
-    public static ServiceApplication CreateDraft(Guid serviceId, Guid agencyId, Guid citizenId, WorkflowDefinition workflow)
+    /// <summary>Which version of the service's form this application was started on. 0 means the service had no form.</summary>
+    public int FormVersion { get; private set; }
+
+    public static ServiceApplication CreateDraft(
+        Guid serviceId, Guid agencyId, Guid citizenId, WorkflowDefinition workflow, int formVersion = 0)
     {
         ArgumentNullException.ThrowIfNull(workflow);
         return new ServiceApplication
@@ -76,6 +80,7 @@ public sealed class ServiceApplication : AuditableEntity
             WorkflowCode = workflow.Code,
             WorkflowVersion = workflow.Version,
             State = workflow.InitialState,
+            FormVersion = formVersion,
         };
     }
 

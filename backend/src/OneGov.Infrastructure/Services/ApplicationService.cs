@@ -8,6 +8,7 @@ using OneGov.Application.Audit;
 using OneGov.Application.Common;
 using OneGov.Domain.Applications;
 using OneGov.Domain.Common;
+using OneGov.Domain.Forms;
 using OneGov.Domain.Identity;
 using OneGov.Domain.Notifications;
 using OneGov.Domain.Registry;
@@ -25,6 +26,9 @@ public sealed class ApplicationService(
     IValidator<TransitionRequest> transitionValidator) : IApplicationService
 {
     private const int MaxPayloadBytes = 64 * 1024;
+
+    // Saving a draft accepts a partly filled form. These steps send it on, so the form must be complete.
+    private static readonly string[] CompleteFormTransitions = ["submit", "provide_documents"];
 
     public async Task<Result<ApplicationDetailDto>> CreateDraftAsync(
         Actor actor, CreateApplicationRequest request, CancellationToken cancellationToken)
@@ -55,7 +59,8 @@ public sealed class ApplicationService(
             return Result<ApplicationDetailDto>.Failure(ApplicationErrors.ServiceUnavailable, "That service is not open for applications.");
         }
 
-        var application = ServiceApplication.CreateDraft(service.Id, service.AgencyId, actor.UserId, workflow);
+        var form = BuiltInForms.Latest(service.Code);
+        var application = ServiceApplication.CreateDraft(service.Id, service.AgencyId, actor.UserId, workflow, form?.Version ?? 0);
         db.Applications.Add(application);
         await db.SaveChangesAsync(cancellationToken);
         await AuditAsync(actor, "application.created", application.Id, cancellationToken);
@@ -129,6 +134,22 @@ public sealed class ApplicationService(
             return WorkflowMissing();
         }
 
+        // Whether it can be edited at all is decided first, so a locked application answers "not editable" rather than a field problem.
+        if (!workflow.EditableStates.Contains(application.State))
+        {
+            return Result<ApplicationDetailDto>.Failure("application.not_editable", "This application can no longer be edited.");
+        }
+
+        var form = await FormForAsync(application, cancellationToken);
+        if (form is not null)
+        {
+            var problems = FormValidator.Validate(form, request.Payload, complete: false, Today());
+            if (problems.Count > 0)
+            {
+                return InvalidForm(problems);
+            }
+        }
+
         var updated = application.UpdatePayload(json, workflow);
         if (!updated.IsSuccess)
         {
@@ -166,7 +187,27 @@ public sealed class ApplicationService(
         }
 
         var now = timeProvider.GetUtcNow();
-        var applied = application.ApplyAs(workflow, request.Transition.Trim(), actor, request.Note, now);
+        var transitionName = request.Transition.Trim();
+
+        // The applicant sending the application on must have a complete, valid form. Checked only when the step is otherwise allowed,
+        // so a wrong state or a missing permission is reported as that, not as a form problem.
+        if (CompleteFormTransitions.Contains(transitionName)
+            && application.CitizenId == actor.UserId
+            && application.AvailableTransitions(workflow, actor).Contains(transitionName))
+        {
+            var form = await FormForAsync(application, cancellationToken);
+            if (form is not null)
+            {
+                using var current = JsonDocument.Parse(application.PayloadJson);
+                var problems = FormValidator.Validate(form, current.RootElement, complete: true, Today());
+                if (problems.Count > 0)
+                {
+                    return InvalidForm(problems);
+                }
+            }
+        }
+
+        var applied = application.ApplyAs(workflow, transitionName, actor, request.Note, now);
         if (!applied.IsSuccess)
         {
             return Result<ApplicationDetailDto>.Failure(applied.Error!);
@@ -196,6 +237,24 @@ public sealed class ApplicationService(
         await AuditAsync(actor, $"application.{applied.Value.Transition}", application.Id, cancellationToken);
         return await BuildDetailAsync(application, actor, cancellationToken);
     }
+
+    private async Task<FormDefinition?> FormForAsync(ServiceApplication application, CancellationToken cancellationToken)
+    {
+        if (application.FormVersion <= 0)
+        {
+            return null;
+        }
+
+        var code = await db.Services.AsNoTracking()
+            .Where(s => s.Id == application.ServiceId).Select(s => s.Code).FirstOrDefaultAsync(cancellationToken);
+        return code is null ? null : BuiltInForms.Find(code, application.FormVersion);
+    }
+
+    private DateOnly Today() => DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime);
+
+    private static Result<ApplicationDetailDto> InvalidForm(IReadOnlyDictionary<string, string> problems) =>
+        Result<ApplicationDetailDto>.Failure(
+            new Error(ApplicationErrors.InvalidPayload, "Some of the information is missing or not valid.", problems));
 
     private async Task<Result<ApplicationDetailDto>> BuildDetailAsync(
         ServiceApplication application, Actor actor, CancellationToken cancellationToken)
@@ -228,8 +287,29 @@ public sealed class ApplicationService(
             application.History
                 .OrderBy(h => h.OccurredAt)
                 .Select(h => new HistoryEntryDto(h.Transition, h.FromState, h.ToState, h.ActorId, h.Note, h.OccurredAt))
-                .ToList());
+                .ToList(),
+            application.FormVersion > 0 && BuiltInForms.Find(serviceCode, application.FormVersion) is { } form ? ToFormDto(form) : null);
     }
+
+    private static LocalizedTextDto ToDto(LocalizedText text) => new(text.En, text.Get("am"), text.Get("om"));
+
+    private static FormDto ToFormDto(FormDefinition form) =>
+        new(
+            form.ServiceCode,
+            form.Version,
+            form.Fields.Select(f => new FormFieldDto(
+                f.Key,
+                f.Type.ToString().ToLowerInvariant(),
+                ToDto(f.Label),
+                f.Hint is null ? null : ToDto(f.Hint),
+                f.Required,
+                f.MaxLength,
+                f.Pattern,
+                f.Min,
+                f.Max,
+                f.MustBeInPast,
+                f.Options?.Select(o => new FormOptionDto(o.Value, ToDto(o.Label))).ToList(),
+                f.RequiredWhen is null ? null : new FormConditionDto(f.RequiredWhen.FieldKey, f.RequiredWhen.EqualsValue))).ToList());
 
     private async Task<long> NextReferenceAsync(CancellationToken cancellationToken) =>
         (await db.Database.SqlQuery<long>($"SELECT nextval('application_reference_seq') AS \"Value\"").ToListAsync(cancellationToken)).Single();

@@ -37,7 +37,15 @@ internal static class ProblemExtensions
             _ => StatusCodes.Status400BadRequest,
         };
 
-        return controller.Problem(detail: error.Message, statusCode: status, title: "Request could not be completed.", type: error.Code);
+        var problem = controller.Problem(detail: error.Message, statusCode: status, title: "Request could not be completed.", type: error.Code);
+
+        // Field-level problems (for example which form fields are missing) go along as an "errors" object.
+        if (error.Details is { Count: > 0 } && problem.Value is ProblemDetails details)
+        {
+            details.Extensions["errors"] = error.Details;
+        }
+
+        return problem;
     }
 
     /// <summary>Who is acting and what they may do, from the access token. Null when the token has no user id.</summary>

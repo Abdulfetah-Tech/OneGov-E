@@ -48,6 +48,14 @@ workflow step it describes, so it can neither be lost nor describe something tha
 and gets a confirmation when they submit. Stores facts (step, new state, note), so the web app shows the text in the reader's language.
 Needs a new migration (the notifications table): `dotnet ef migrations add Notifications ...`.
 Backend verified (94 domain and 70 integration tests). Browser side written, not yet run: a Notifications link with an unread count in the header (refreshed every minute while signed in), and a Notifications page where each item opens its application and is marked read.
+## Phase 5a: structured forms (written, not yet compiled)
+Each service can have a form definition (fields, types, limits, choices, a conditional "required when" rule) in three languages. The
+same definition drives the server's checks and, in the next step, the web form. Saving a draft accepts a partly filled form but refuses
+wrong values and unknown fields; submitting, or sending documents back to review, needs every required field. Refused data comes back
+with the fields named (`errors` in the problem response). An application remembers the form version it started on. The sample forms for
+tax filing and ID renewal use SAMPLE rules, not official ones. Needs a migration (`form_version` on applications):
+`dotnet ef migrations add ApplicationFormVersion ...`. Existing integration tests now fill in a valid form before submitting.
+
 ## Phase 4c: document upload (written, not yet compiled)
 `/api/v1/applications/{id}/documents`: upload (multipart field `file`), list, download, delete. PDF, PNG and JPEG only, recognised by their
 first bytes rather than the name or the type the browser claims; at most 5 MB each and 10 per application; names are sanitised

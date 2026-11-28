@@ -1,7 +1,8 @@
 namespace OneGov.Domain.Common;
 
 /// <summary>A domain error with a stable machine-readable code.</summary>
-public sealed record Error(string Code, string Message);
+/// <param name="Details">Optional per-field problems, for example a form field and the reason it was refused.</param>
+public sealed record Error(string Code, string Message, IReadOnlyDictionary<string, string>? Details = null);
 
 /// <summary>Outcome of an operation that can fail for expected business reasons.</summary>
 public sealed class Result<T>

@@ -226,6 +226,10 @@ namespace OneGov.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
+                    b.Property<int>("FormVersion")
+                        .HasColumnType("integer")
+                        .HasColumnName("form_version");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
